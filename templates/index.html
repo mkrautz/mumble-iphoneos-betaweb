@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title>Mumble for iPhoneOS Beta Portal</title>
+	<style type="text/css" media="screen">
+		body {
+			background-color: black;
+			color: white;
+			font-family: Helvetica, Verdana;
+			background-image: url({{ bgurl }});
+			margin: 0px 0px 0px 0px;
+		}
+		h1 {
+			color: white;
+			text-shadow: 1px 1px 2px #666;
+			font-size: 34px;
+		}
+		.iphone {
+			background-image: url(/static/iphone.png);
+			width: 414px;
+			height: 770px;
+		}
+		.iphone .screen {
+			padding-left: 47px;
+			padding-top: 139px;
+		}
+		.phonecontainer {
+			float: left;
+		}
+		.content {
+			padding-left: 420px;
+			padding-right: 20px;
+		}
+		.box {
+			background-color: white;
+			box-shadow: 1px 1px 2px #666;
+			-moz-box-shadow: 1px 1px 2px #666;
+			-webkit-box-shadow: 1px 1px 2px #666;
+			-webkit-border-radius: 10px;
+			-moz-border-radius: 10px;
+			padding: 10px;
+			color: #666;
+		}
+		.box a {
+			color: black;
+		}
+		.topbar {
+			background-image: url({{ topbarurl }});
+			height: 45px;
+		}
+		.topbar #topalign {
+			text-align: center;
+			height: 45px;
+			display: block;
+			padding-top: 7px;
+			vertical-align: middle;
+		}
+		.topbar #title {
+			font-size: 23px;
+			font-weight: bold;
+			font-family: Helvetica, Verdana;
+			text-shadow: 1px 1px 2px #666;
+		}
+		#maincontent {
+			padding-left: 2%;
+			padding-right: 2%;
+		}
+		#disclaimer {
+			float: left;
+			width: 100%;
+			text-align: center;
+			font-size: 8px;
+			color: #666;
+		}
+		form input {
+			border: 1px solid black;
+			padding: 5px;
+			background-color: #cfcfcf;
+			font-size: 13px
+			-moz-border-radius: 7px;
+			-webkit-border-radius: 7px;
+		}
+		#box span {
+			line-height: 20px;
+		}
+		/* Word wrapping <pre>: http://users.tkk.fi/tkarvine/pre-wrap-css3-mozilla-opera-ie.html */
+		pre {
+			white-space: pre-wrap;       /* css-3 */
+			white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+			white-space: -pre-wrap;      /* Opera 4-6 */
+			white-space: -o-pre-wrap;    /* Opera 7 */
+			word-wrap: break-word;       /* Internet Explorer 5.5+ */
+		}
+	</style>
+</head>
+<body>
+	<div class="topbar">
+		<div id="topalign"><span id="title">Mumble for iPhoneOS Beta Portal</span></div>
+	</div>
+	<div id="maincontent">
+		<div class="phonecontainer">
+			<div class="iphone">
+				<div class="screen"><img src="/static/app.jpg"></div>
+			</div>
+		</div>
+		<div class="content">
+	
+			<h1>Mumble for iPhoneOS</h1>
+			<div class="box">
+				<span>This is the home of the iPhoneOS port of Mumble. That is, a Mumble client that runs on the iPhone, iPod Touch and (maybe in the future), iPad. Mumble is an open-source, low-latency, high-quality
+				      voice chat software.</span><br /><br />
+				<span>This site is primarily a portal for beta-testing efforts of the iPhoneOS client.</span><br /><br />
+				<span>For Mumble-related information, please visit the <a href="http://www.mumble.info"/>Mumble website</a>.</span>
+			</div>
+	
+			<h1>The Source</h1>
+			<div class="box">
+				<span>To check out the code from GitHub:</span>
+				<pre>   git clone http://github.com/mkrautz/mumble-iphoneos.git</pre>
+				<span>The code for this website is also available on GitHub:</span>
+				<pre>   git clone http://github.com/mkrautz/mumble-iphoneos-betaweb.git</pre>
+				<span>Happy hacking!</span>
+			</div>
+
+			<h1>Recent Git activity</h1>
+			<div class="box">
+				{% for commit in commits %}
+					<div>
+						<a href="{{ commit.url }}">{{ commit.title }}</a><br />
+						<i>{{ commit.date|timesince }} ago</i> by <i>{{ commit.author }}</i>
+					</div><br />
+				{% endfor %}
+
+				<a href="http://github.com/mkrautz/mumble-iphoneos/">More...</a>
+			</div>
+
+
+			<h1>Beta-testing</h1>
+			<div class="box">
+				<span>No beta-testing is currently taking place.</span>
+			</div>
+		</div>
+		<br />
+	</div>
+	<div id="disclaimer">
+		<span>
+		Apple, the Apple logo, iPod, and iTunes are trademarks of Apple Inc., registered in the U.S. and other countries.
+		iPhone is a trademark of Apple Inc.
+		The iPhone-simulator image, the background and the top bar artwork copyright Apple Inc.
+		</span>
+		<br/><br/>
+	</div>
+</body>
+</html>
