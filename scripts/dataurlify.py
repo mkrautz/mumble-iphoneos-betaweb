@@ -13,7 +13,7 @@ def generate(fn, mimetype=None):
 		s = f.read()
 		b64s = base64.b64encode(s)
 		if not mimetype:
-			mimetype = mimetypes.guess_type(fn)
+			mimetype, extension = mimetypes.guess_type(fn)
 		return 'data:%s;base64,%s' % (mimetype, b64s)
 
 def main():

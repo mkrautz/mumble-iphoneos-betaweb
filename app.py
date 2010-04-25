@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from django.utils.timesince import timesince
 
+import os
 import logging
 
 app = Flask(__name__)
@@ -8,8 +9,6 @@ if not app.jinja_env.filters.has_key('timesince'):
 	app.jinja_env.filters['timesince'] = timesince
 logging.info(app.jinja_env)
 
-import os
-import dataurlify
 import github
 
 from google.appengine.api import memcache
@@ -30,22 +29,14 @@ def get_latest_commits(limit=5):
 	commits.sort(datesort)
 	return commits[:limit]
 
-def approot(p):
-	return os.path.join(os.path.dirname(__file__), p)
-
 @app.route('/')
 def index():
-	# Attempt to generate data-urls for some of our static assets.
-	# This makes our page feel like it's loading quicker, because
-	# there won't be any time where the background and the topbar
-	# aren't rendered because they need to be fetched first.
 	try:
-		bg = dataurlify.generate(approot('static/bg.png'))
-	except IOError:
+		import images
+		bg = images.background
+		topbar = images.topbar
+	except ImportError:
 		bg = '/static/bg.png'
-	try:
-		topbar = dataurlify.generate(approot('static/topbar.png'))
-	except IOError:
 		topbar = '/static/topbar.png'
 
 	commits = memcache.get('commits', namespace='frontpage')
