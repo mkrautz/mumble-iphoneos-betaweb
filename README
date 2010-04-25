@@ -1,0 +1,21 @@
+Mumble for iPhoneOS Beta Portal
+===============================
+
+This project serves as the "beta portal" of the Mumble client for iPhoneOS.
+It is a small chunk of Python code that's built to run off Google App Engine.
+
+Setting it up
+=============
+
+The beta portal uses the Flask microframework, which depends on Jinja2 and Werkzeug.
+To get up and running:
+
+ $ pip install flask
+
+Then, to package up the dependencies for use on App Engine, you must run
+
+ $ scripts/genassets.py
+
+from the project root directory to generate a 'modules.zip', which is basically
+just an opaque container that includes all of the modules we depend on that aren't
+already on App Engine.
