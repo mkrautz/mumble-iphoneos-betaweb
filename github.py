@@ -38,8 +38,9 @@ def parse_date(date, hd=None, md=None):
 def commits(username, project, branch='master', limit=5):
 	"""Fetch a list of GitHub commits."""
 	commits = []
+	web_url = 'http://github.com/%s/%s/' % (username, project)
 	try:
-		r = urllib2.urlopen('http://github.com/%s/%s/commits/%s.atom' % (username, project, branch))
+		r = urllib2.urlopen(web_url + 'commits/%s.atom' % branch)
 	except IOError:
 		return commits
 
@@ -48,6 +49,8 @@ def commits(username, project, branch='master', limit=5):
 	entries = tree.getElementsByTagName('entry')
 	for entry in entries:
 		d = {}
+		d['project'] = project
+		d['weburl'] = web_url
 		d['url'] = entry.getElementsByTagName('link')[0].getAttribute('href')
 		d['title'] = entry.getElementsByTagName('title')[0].childNodes[0].data
 		date = entry.getElementsByTagName('updated')[0].childNodes[0].data

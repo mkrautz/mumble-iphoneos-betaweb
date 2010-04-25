@@ -12,6 +12,24 @@ import os
 import dataurlify
 import github
 
+from google.appengine.api import memcache
+
+def get_latest_commits(limit=5):
+	commits = []
+	commits.extend(github.commits('mkrautz', 'mumble-iphoneos', limit=10))
+	commits.extend(github.commits('mkrautz', 'mumble-iphoneos-betaweb', limit=10))
+	commits.extend(github.commits('mkrautz', 'mumblekit', limit=10))
+
+	def datesort(d1, d2):
+		if d1['date'] > d2['date']:
+			return -1
+		elif d1['date'] < d2['date']:
+			return 1
+		else:
+			return 0
+	commits.sort(datesort)
+	return commits[:limit]
+
 def approot(p):
 	return os.path.join(os.path.dirname(__file__), p)
 
@@ -30,7 +48,11 @@ def index():
 	except IOError:
 		topbar = '/static/topbar.png'
 
-	commits = github.commits('mkrautz', 'mumble-iphoneos')
+	commits = memcache.get('commits', namespace='frontpage')
+	if not commits:
+		commits = get_latest_commits()
+		if not memcache.add('commits', commits, 60*60, namespace='frontpage'):
+			logging.warning('Could not add commits to memcache')
 
 	return render_template('index.html', bgurl=bg, topbarurl=topbar, commits=commits)
 

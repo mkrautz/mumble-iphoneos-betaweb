@@ -128,7 +128,7 @@
 				{% for commit in commits %}
 					<div>
 						<a href="{{ commit.url }}">{{ commit.title }}</a><br />
-						<i>{{ commit.date|timesince }} ago</i> by <i>{{ commit.author }}</i>
+						<i>{{ commit.date|timesince }} ago</i> in <i>{{ commit.project }}</i> by <i>{{ commit.author }}</i>
 					</div><br />
 				{% endfor %}
 
