@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, abort, render_template
 from django.utils.timesince import timesince
 
 import os
@@ -29,6 +29,14 @@ def get_latest_commits(limit=5):
 	commits.sort(datesort)
 	return commits[:limit]
 
+@app.route('/_github_push', methods=['POST'])
+def github_push():
+	logging.info('GitHub Push')
+	commits = get_latest_commits()
+	if not memcache.set('commits', commits, namespace='frontpage'):
+		logging.warning('Could not update commits in memcache')
+	return ''
+
 @app.route('/')
 def index():
 	try:
@@ -42,7 +50,7 @@ def index():
 	commits = memcache.get('commits', namespace='frontpage')
 	if not commits:
 		commits = get_latest_commits()
-		if not memcache.add('commits', commits, 60*60, namespace='frontpage'):
+		if not memcache.add('commits', commits, namespace='frontpage'):
 			logging.warning('Could not add commits to memcache')
 
 	return render_template('index.html', bgurl=bg, topbarurl=topbar, commits=commits)
