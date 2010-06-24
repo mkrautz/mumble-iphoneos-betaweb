@@ -60,7 +60,7 @@ def index():
 def diagnostics_submit():
 	required = set(('device', 'operating-system', 'udid', 'version', 'git-revision',
 	                'build-date', 'preprocessor-avg-runtime'))
-	if required != set(request.form.keys()):
+	if not required.issubset(set(request.form.keys())):
 		return ''
 
 	report = DiagnosticReport()
