@@ -59,7 +59,7 @@ def index():
 @app.route('/diagnostics', methods=['POST'])
 def diagnostics_submit():
 	required = set(('device', 'operating-system', 'udid', 'version', 'git-revision',
-	                'build-date', 'preprocessor-avg-runtime'))
+	                'build-date', 'time-since-launch', 'preprocessor-avg-runtime'))
 	if not required.issubset(set(request.form.keys())):
 		return ''
 
@@ -71,6 +71,10 @@ def diagnostics_submit():
 	report.version = request.form['version'].rstrip()
 	report.gitrev = request.form['git-revision'].rstrip()
 	report.build_date = request.form['build-date'].rstrip()
+	try:
+		report.time_since_launch = float(request.form['time-since-launch'].rstrip())
+	except ValueError:
+		report.time_since_launch = None
 	try:
 		report.preprocessor_avg_runtime = int(request.form['preprocessor-avg-runtime'].rstrip())
 	except ValueError:

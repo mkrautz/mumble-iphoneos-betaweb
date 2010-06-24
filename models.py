@@ -7,9 +7,10 @@ class DiagnosticReport(db.Model):
 	device = db.StringProperty()
 	system = db.StringProperty()
 	udid = db.StringProperty()
-	# Build
+	# Application
 	version = db.StringProperty()
 	gitrev = db.StringProperty()
 	build_date = db.StringProperty()
+	time_since_launch = db.FloatProperty()
 	# Audio
 	preprocessor_avg_runtime = db.IntegerProperty()
