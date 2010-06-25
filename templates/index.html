@@ -22,8 +22,18 @@
 			height: 770px;
 		}
 		.iphone .screen {
-			padding-left: 47px;
-			padding-top: 139px;
+			position: relative;
+		}
+		.iphone .screen img {
+			position: absolute;
+			top: 139px;
+			left: 47px;
+			z-index: 49;
+			display: none;
+		}
+		.iphone .screen img.active {
+			z-index: 50;
+			display: block;
 		}
 		.phonecontainer {
 			float: left;
@@ -93,6 +103,21 @@
 			word-wrap: break-word;       /* Internet Explorer 5.5+ */
 		}
 	</style>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			setInterval(function() {
+				var active = $('.iphone .screen img.active');
+				var next = active.next();
+				if (next.attr('src') === undefined) {
+					next = $('.iphone .screen img:first');
+				}
+				next.css({ opacity: 0.0 }).addClass('active').animate({ opacity: 1.0 }, 1000, function() {
+					active.removeClass('active');
+				});
+			}, 5000);
+		});
+	</script>
 </head>
 <body>
 	<div class="topbar">
@@ -101,7 +126,16 @@
 	<div id="maincontent">
 		<div class="phonecontainer">
 			<div class="iphone">
-				<div class="screen"><img src="/static/app.jpg"></div>
+				<div class="screen">
+					<img class="active" src="/static/app.jpg"/>
+					<img src="/static/screens/0.1-about.png"/>
+					<img src="/static/screens/0.1-advaudio.png"/>
+					<img src="/static/screens/0.1-identity.png"/>
+					<img src="/static/screens/0.1-multitask.png"/>
+					<img src="/static/screens/0.1-preferences.png"/>
+					<img src="/static/screens/0.1-springboard.png"/>
+					<img src="/static/app.jpg"/>
+				</div>
 			</div>
 		</div>
 		<div class="content">
@@ -111,7 +145,7 @@
 				<span>This is the home of the iOS port of Mumble. That is, a Mumble client that runs on the iPhone, iPod Touch and iPad. Mumble is an open-source, low-latency, high-quality
 				      voice chat software.</span><br /><br />
 				<span>This site is primarily a portal for beta-testing efforts of the iOS client.</span><br /><br />
-				<span>For Mumble-related information, please visit the <a href="http://www.mumble.info"/>Mumble website</a>.</span>
+				<span>For Mumble-related information, please visit the <a href="http://www.mumble.info">Mumble website</a>.</span>
 			</div>
 
 			<h1>The Source</h1>
