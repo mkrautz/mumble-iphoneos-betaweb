@@ -64,7 +64,7 @@ def diagnostics_submit():
 		return ''
 
 	report = DiagnosticReport()
-	report.submit_date = datetime.datetime.now()
+	report.submit_date = datetime.datetime.utcnow()
 	report.device = request.form['device'].rstrip()
 	report.system = request.form['operating-system'].rstrip()
 	report.udid = request.form['udid'].rstrip()
