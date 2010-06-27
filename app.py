@@ -70,7 +70,10 @@ def diagnostics_submit():
 	report.udid = request.form['udid'].rstrip()
 	report.version = request.form['version'].rstrip()
 	report.gitrev = request.form['git-revision'].rstrip()
-	report.build_date = request.form['build-date'].rstrip()
+	try:
+		report.build_date = datetime.datetime.strptime(request.form['build-date'].rstrip(), '%Y-%m-%d %H:%M:%S')
+	except ValueError:
+		report.build_date = None
 	try:
 		report.time_since_launch = float(request.form['time-since-launch'].rstrip())
 	except ValueError:

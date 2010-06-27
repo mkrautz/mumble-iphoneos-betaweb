@@ -10,7 +10,7 @@ class DiagnosticReport(db.Model):
 	# Application
 	version = db.StringProperty()
 	gitrev = db.StringProperty()
-	build_date = db.StringProperty()
+	build_date = db.DateTimeProperty()
 	time_since_launch = db.FloatProperty()
 	# Audio
 	preprocessor_avg_runtime = db.IntegerProperty()
