@@ -9,6 +9,11 @@ handlers:
   static_dir: static
   secure: optional
 
+- url: /_tasks/.*
+  script: runner.py
+  secure: optional
+  login: admin
+
 - url: /.*
   script: runner.py
   secure: optional

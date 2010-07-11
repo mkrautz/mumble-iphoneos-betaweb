@@ -1,0 +1,120 @@
+		body {
+			background-color: black;
+			color: white;
+			font-family: Helvetica, Verdana;
+			background-image: url({{ bgurl }});
+			margin: 0px 0px 0px 0px;
+		}
+		h1 {
+			color: white;
+			text-shadow: 1px 1px 2px #666;
+			font-size: 34px;
+		}
+		.iphone {
+			background-image: url(/static/iphone.png);
+			width: 414px;
+			height: 770px;
+		}
+		.leftnav {
+			width: 300px;
+		}
+		.iphone .screen {
+			position: relative;
+		}
+		.iphone .screen img {
+			position: absolute;
+			top: 139px;
+			left: 47px;
+			z-index: 49;
+			display: none;
+		}
+		.iphone .screen img.active {
+			z-index: 50;
+			display: block;
+		}
+		.leftcontainer {
+			float: left;
+		}
+		.content {
+			padding-left: 420px;
+			padding-right: 20px;
+		}
+		.box {
+			background-color: white;
+			box-shadow: 1px 1px 2px #666;
+			-moz-box-shadow: 1px 1px 2px #666;
+			-webkit-box-shadow: 1px 1px 2px #666;
+			-webkit-border-radius: 10px;
+			-moz-border-radius: 10px;
+			padding: 10px;
+			color: #666;
+		}
+		.box a {
+			color: black;
+		}
+		.topbar {
+			background-image: url({{ topbarurl }});
+			height: 45px;
+		}
+		.topbar #topalign {
+			text-align: center;
+			height: 45px;
+			display: block;
+			padding-top: 7px;
+			vertical-align: middle;
+		}
+		.topbar #title {
+			font-size: 23px;
+			font-weight: bold;
+			font-family: Helvetica, Verdana;
+			text-shadow: 1px 1px 2px #666;
+		}
+		#maincontent {
+			padding-left: 2%;
+			padding-right: 2%;
+		}
+		#disclaimer {
+			float: left;
+			width: 100%;
+			text-align: center;
+			font-size: 8px;
+			color: #666;
+		}
+		form input {
+			border: 1px solid black;
+			padding: 5px;
+			background-color: #cfcfcf;
+			font-size: 13px
+			-moz-border-radius: 7px;
+			-webkit-border-radius: 7px;
+		}
+		#box span {
+			line-height: 20px;
+		}
+		/* Word wrapping <pre>: http://users.tkk.fi/tkarvine/pre-wrap-css3-mozilla-opera-ie.html */
+		pre {
+			white-space: pre-wrap;       /* css-3 */
+			white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+			white-space: -pre-wrap;      /* Opera 4-6 */
+			white-space: -o-pre-wrap;    /* Opera 7 */
+			word-wrap: break-word;       /* Internet Explorer 5.5+ */
+		}
+		#title a {
+			color: white;
+			text-decoration: none;
+		}
+		.loginbutton {
+			display: inline;
+			margin: 3px;
+			padding: 6px;
+			border: 3px solid white;
+			-moz-border-radius: 7px;
+			-webkit-border-radius: 7px;
+			vertical-align: middle;
+		}
+		.loginproviders {
+			margin: 3px;
+		}
+		.activelogin {
+			border: 3px solid orange;
+		}

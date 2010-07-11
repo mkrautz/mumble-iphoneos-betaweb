@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block titlecontent %}
+<a href="/">Mumble for iOS Beta Portal</a>
+&#x25B8;
+<a href="/profile">Profile</a>
+{% endblock %}
+
+{% block content %}
+			<h1>Profile</h1>
+			<div class="box">
+				<form method="post" action="/profile/update">					
+					Name<br />
+					This should not necessarily be your real name, a nickname will do.<br />
+					<input type="text" value="{{ g.betauser.name }}" /><br /><br />
+
+					Email<br />
+					Your email address will be used to notify you of any changes of your beta status
+					<input type="email" value="{{ g.betauser.email }}" /><br /><br />
+
+					UDID<br />
+					<input type="udid" value="{{ g.betauser.udid }}" /><br /><br />
+
+					<input type="submit" value="Update" />
+				</form>
+			</div>
+{% endblock %}

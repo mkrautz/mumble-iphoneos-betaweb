@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Login using OpenID</h1>
+<div class="box">
+  <form method="get" action="/login/openid">
+    {% if continue_url %}
+      <input  type="hidden" name="continue" value="{{continue_url|escape}}" />
+    {% endif %}
+    <input type="text" name="openid" />
+    <input type="submit" value="Log In" />
+  </form>
+</div>
+{% endblock %}

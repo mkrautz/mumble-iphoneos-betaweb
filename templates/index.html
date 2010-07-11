@@ -1,155 +1,74 @@
-<!doctype html>
-<html>
-<head>
-	<meta http-equiv="content-type" content="text/html; charset=utf-8">
-	<title>Mumble for iOS Beta Portal</title>
-	<style type="text/css" media="screen">
-		body {
-			background-color: black;
-			color: white;
-			font-family: Helvetica, Verdana;
-			background-image: url({{ bgurl }});
-			margin: 0px 0px 0px 0px;
+{% extends "base.html" %}
+
+{% block head %}
+<script type="text/javascript">
+		function set_provider(name) {
+			var providernames = {
+				"openid-login": "OpenID",
+				"facebook-login": "Facebook",
+				"twitter-login": "Twitter",
+				"google-login": "Google Account",
+				"steam-login": "Steam Community",
+				"yahoo-login": "Yahoo ID",
+				"myopenid-login": "MyOpenID",
+				"aol-login": "Aol. Account",
+				"myspace-login": "MySpace",
+				"wordpress-login": "WordPress",
+				"verisign-login": "Verisign",
+			};
+			var providerurls = {
+				"openid-login": undefined,
+				"facebook-login": undefined,
+				"twitter-login": undefined,
+				"google-login": "gmail.com",
+				"steam-login": "steamcommunity.com/openid",
+				"yahoo-login": "yahoo.com",
+				"myopenid-login": "myopenid.com",
+				"aol-login": "aol.com",
+				"myspace-login": "myspace.com",
+				"wordpress-login": "wordpress.com",
+				"verisign-login": "pip.verisignlabs.com",
+			};
+			var provider = providernames[name];
+			var url = providerurls[name];
+	
+			$("#loginprovider").html(provider);
+			$("#loginbutton").attr("value", "Login through " + provider);
+
+			// Special case our OAuth logins
+			if (name == "facebook-login")
+				$("#loginform").attr("action", "/login/facebook");
+			else if (name == "twitter-login")
+				$("#loginform").attr("action", "/login/twitter");
+			else
+				$("#loginform").attr("action", "/login/openid");
+
+			// Only show text box for custom OpenID
+			if (name != "openid-login") {
+				$("#loginurl").hide();
+				$("#loginurl").attr("value", url);
+			} else {
+				$("#loginurl").attr("value", "");
+				$("#loginurl").show();
+			}
 		}
-		h1 {
-			color: white;
-			text-shadow: 1px 1px 2px #666;
-			font-size: 34px;
-		}
-		.iphone {
-			background-image: url(/static/iphone.png);
-			width: 414px;
-			height: 770px;
-		}
-		.iphone .screen {
-			position: relative;
-		}
-		.iphone .screen img {
-			position: absolute;
-			top: 139px;
-			left: 47px;
-			z-index: 49;
-			display: none;
-		}
-		.iphone .screen img.active {
-			z-index: 50;
-			display: block;
-		}
-		.phonecontainer {
-			float: left;
-		}
-		.content {
-			padding-left: 420px;
-			padding-right: 20px;
-		}
-		.box {
-			background-color: white;
-			box-shadow: 1px 1px 2px #666;
-			-moz-box-shadow: 1px 1px 2px #666;
-			-webkit-box-shadow: 1px 1px 2px #666;
-			-webkit-border-radius: 10px;
-			-moz-border-radius: 10px;
-			padding: 10px;
-			color: #666;
-		}
-		.box a {
-			color: black;
-		}
-		.topbar {
-			background-image: url({{ topbarurl }});
-			height: 45px;
-		}
-		.topbar #topalign {
-			text-align: center;
-			height: 45px;
-			display: block;
-			padding-top: 7px;
-			vertical-align: middle;
-		}
-		.topbar #title {
-			font-size: 23px;
-			font-weight: bold;
-			font-family: Helvetica, Verdana;
-			text-shadow: 1px 1px 2px #666;
-		}
-		#maincontent {
-			padding-left: 2%;
-			padding-right: 2%;
-		}
-		#disclaimer {
-			float: left;
-			width: 100%;
-			text-align: center;
-			font-size: 8px;
-			color: #666;
-		}
-		form input {
-			border: 1px solid black;
-			padding: 5px;
-			background-color: #cfcfcf;
-			font-size: 13px
-			-moz-border-radius: 7px;
-			-webkit-border-radius: 7px;
-		}
-		#box span {
-			line-height: 20px;
-		}
-		/* Word wrapping <pre>: http://users.tkk.fi/tkarvine/pre-wrap-css3-mozilla-opera-ie.html */
-		pre {
-			white-space: pre-wrap;       /* css-3 */
-			white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
-			white-space: -pre-wrap;      /* Opera 4-6 */
-			white-space: -o-pre-wrap;    /* Opera 7 */
-			word-wrap: break-word;       /* Internet Explorer 5.5+ */
-		}
-	</style>
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-	<script type="text/javascript">
+
 		$(document).ready(function() {
-			setInterval(function() {
-				var active = $('.iphone .screen img.active');
-				var next = active.next();
-				if (next.attr('src') === undefined) {
-					next = $('.iphone .screen img:first');
-				}
-				next.css({ opacity: 0.0 }).addClass('active').animate({ opacity: 1.0 }, 1000, function() {
-					active.removeClass('active');
-				});
-			}, 5000);
+			$('.loginbutton').hover(function(evt) {
+				$('.loginbutton').removeClass('activelogin');
+				$(this).addClass('activelogin');
+				set_provider(this.id);
+			}, function(evt) {
+			});
 		});
 	</script>
-	<script type="text/javascript">
-	    var _gaq = _gaq || [];
-		_gaq.push(['_setAccount', 'UA-17225766-1']);
-		_gaq.push(['_trackPageview']);
-		(function() {
-			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		})();
-	</script>
-</head>
-<body>
-	<div class="topbar">
-		<div id="topalign"><span id="title">Mumble for iOS Beta Portal</span></div>
-	</div>
-	<div id="maincontent">
-		<div class="phonecontainer">
-			<div class="iphone">
-				<div class="screen">
-					<img class="active" src="/static/app.jpg"/>
-					<img src="/static/screens/0.1-about.png"/>
-					<img src="/static/screens/0.1-advaudio.png"/>
-					<img src="/static/screens/0.1-identity.png"/>
-					<img src="/static/screens/0.1-multitask.png"/>
-					<img src="/static/screens/0.1-preferences.png"/>
-					<img src="/static/screens/0.1-springboard.png"/>
-					<img src="/static/app.jpg"/>
-				</div>
-			</div>
-		</div>
-		<div class="content">
+{% endblock %}
 
+{% block titlecontent %}
+<a href="/">Mumble for iOS Beta Portal</a>
+{% endblock %}
+
+{% block content %}
 			<h1>Mumble for iOS</h1>
 			<div class="box">
 				<span>This is the home of the iOS port of Mumble. That is, a Mumble client that runs on the iPhone, iPod Touch and iPad. Mumble is an open-source, low-latency, high-quality
@@ -181,21 +100,30 @@
 				<a href="http://github.com/mkrautz/mumble-iphoneos/">More...</a>
 			</div>
 
-
-			<h1>Beta-testing</h1>
+			{% if not g.betauser %}
+			<h1>Log in</h1>
 			<div class="box">
-				<span>No beta-testing is currently taking place.</span>
+				Log into the beta portal using one of the following identity providers:<br /><br />
+				<div class="loginproviders">
+					<div id="openid-login" class="loginbutton activelogin"><img width="16" height="16" src="http://www.openid.net/favicon.ico" /></div>
+					<div id="facebook-login" class="loginbutton"><img width="16" height="16" src="http://www.facebook.com/favicon.ico" /></div>
+					<div id="twitter-login" class="loginbutton"><img width="16" height="16" src="http://www.twitter.com/favicon.ico" /></div>
+					<div id ="google-login" class="loginbutton"><img width="16" height="16" src="http://www.google.com/favicon.ico" /></div>
+					<div id="steam-login" class="loginbutton"><img width="16" height="16" src="http://www.steampowered.com/favicon.ico" /></div>
+					<div id="yahoo-login" class="loginbutton"><img width="16" height="16" src="http://www.yahoo.com/favicon.ico" /></div>
+					<div id="myopenid-login" class="loginbutton"><img width="16" height="16" src="http://www.myopenid.com/favicon.ico" /></div>
+					<div id="aol-login" class="loginbutton"><img width="16" height="16" src="http://www.aol.com/favicon.ico" /></div>
+					<div id="myspace-login" class="loginbutton"><img width="16" height="16" src="http://www.myspace.com/favicon.ico" /></div>
+					<div id="wordpress-login" class="loginbutton"><img width="16" height="16" src="http://www.wordpress.com/favicon.ico" /></div>
+					<div id="verisign-login" class="loginbutton"><img width="16" height="16" src="http://www.verisign.com/favicon.ico" /></div>
+				</div>
+				<br />
+				<h2 id="loginprovider">OpenID</h2>
+				<form id="loginform" method="get" action="/login/openid">
+					<input id="loginurl" name="openid" type="text" value="" />
+					<input id="loginbutton" type="submit" value="Login using OpenID" />
+				</form>
 			</div>
-		</div>
-		<br />
-	</div>
-	<div id="disclaimer">
-		<span>
-		Apple, the Apple logo, iPod, and iTunes are trademarks of Apple Inc., registered in the U.S. and other countries.
-		iPhone is a trademark of Apple Inc.
-		The iPhone-simulator image, the background and the top bar artwork copyright Apple Inc.
-		</span>
-		<br/><br/>
-	</div>
-</body>
-</html>
+			{% endif %}
+
+{% endblock %}

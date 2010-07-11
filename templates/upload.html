@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block titlecontent %}
+<a href="/">Mumble for iOS Beta Portal</a>
+&#x25B8;
+<a href="/upload">Upload</a>
+{% endblock %}
+
+{% block content %}
+<h1>Upload new file</h1>
+<div class="box">
+	<form method="post" action="{{ url }}" enctype="multipart/form-data">
+		<input type="file" name="file" /><br />
+		<input type="submit" value="Submit" />
+	</form>
+</div>
+{% endblock %}

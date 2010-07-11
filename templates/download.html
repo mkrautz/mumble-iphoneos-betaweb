@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block titlecontent %}
+<a href="/">Mumble for iOS Beta Portal</a>
+&#x25B8;
+<a href="/download">Downloads</a>
+{% endblock %}
+
+{% block content %}
+	{% if latest_release %}
+	<h1>Latest Beta Release</h1>
+			<div class="box">
+				<a href="{{ latest_release.get_download_url() }}">{{ latest_release.filename }}</a><br />
+				Release Date: {{ latest_release.release_date }} ({{ latest_release.release_date|timesince }} ago)<br />
+				Version: {{ latest_release.version }}<br />
+				Git Revision: {{ latest_release.gitrev }}<br />
+				SHA1 digest: {{ latest_release.sha1sum }}<br />
+			</div>
+	{% else %}
+	<h1>No releases available</h1>
+	<div class="box">
+		No releases are currently available.
+	</div>
+	{% endif %}
+	{% if older_releases %}
+	<h1>Older Releases</h1>
+	<div class="box">
+		{% for release in older_releases %}
+				<a href="{{ release.get_download_url() }}">{{ release.filename }}</a><br />
+				Release Date: {{ release.release_date }} ({{ release.release_date|timesince }} ago)<br />
+				Version: {{ release.version }}<br />
+				Git Revision: {{ release.gitrev }}<br />
+				SHA1 digest: {{ release.sha1sum }}<br />
+				<br />
+		{% endfor %}
+	</div>
+	{% endif %}
+	
+{% endblock %}

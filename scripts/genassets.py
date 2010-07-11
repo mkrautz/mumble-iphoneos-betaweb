@@ -7,15 +7,18 @@ import shutil
 import tempfile
 import zipfile
 
+import plistlib
 import flask
 import jinja2
 import werkzeug
+import oauth2
+import httplib2
 
 def main():
 	tmpdir = tempfile.mkdtemp()
 	print ' * Using tmpdir: %s' % tmpdir
 
-	for module in ('flask', 'jinja2', 'werkzeug'):
+	for module in ('flask', 'jinja2', 'werkzeug', 'oauth2', 'httplib2', 'plistlib'):
 		fn = sys.modules[module].__file__
 		bfn = os.path.basename(fn)
 		if bfn.startswith('__init__'):

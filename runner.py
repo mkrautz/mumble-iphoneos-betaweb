@@ -10,6 +10,9 @@ sys.path.insert(0, 'modules.zip')
 import jinja2
 import werkzeug
 
+# Make sure we can reach plistlib
+import plistlib
+
 # Set up a Django configuration so we can call Django functions (so we can use
 # Django filters in Jinja2, for example)
 from django.conf import settings
