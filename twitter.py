@@ -63,8 +63,14 @@ def finish_login():
 		session.pop('twitter-req-token', None)
 		session.permanent = True
 
-		# fixme(mkrautz): See comment about the same thing in facebook.py.
-		return redirect('http://mumble-ios.appspot.com')
+		# Should we redirect to a specific page?
+		login_redirect_url = session.pop('login-redirect-url', None)
+		if login_redirect_url:
+			return redirect(login_redirect_url)
+		# Redirect to front page
+		else:
+			# fixme(mkrautz): See comment about the same thing in facebook.py.			
+			return redirect('http://mumble-ios.appspot.com')
 
 	session.pop('twitter-req-token', None)
 	abort(404)

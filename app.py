@@ -72,7 +72,8 @@ def stylesheet():
 	except ImportError:
 		bg = '/static/bg.png'
 		topbar = '/static/topbar.png'
-	buf = render_template('betaweb.css', bgurl=bg, topbarurl=topbar)
+	embedded = request.values.get('embedded')
+	buf = render_template('betaweb.css', bgurl=bg, topbarurl=topbar, embedded=bool(embedded))
 	return Response(buf, mimetype='text/css')
 
 @app.route('/')
@@ -82,6 +83,9 @@ def index():
 		commits = get_latest_commits()
 		if not memcache.add('commits', commits, namespace='frontpage'):
 			logging.warning('Could not add commits to memcache')
+
+	# Possible race... Do we care?
+	session.pop('login-redirect-url', None)
 
 	return render_template('index.html',
 						   commits=commits)
@@ -125,7 +129,14 @@ def login_openid_callback():
 		session.permanent = True
 	else:
 		logging.warning('No OpenID user logged in.')
-	return redirect('/')
+
+	# Should we redirect to a specific page?
+	login_redirect_url = session.pop('login-redirect-url', None)
+	if login_redirect_url:
+		return redirect(login_redirect_url)
+	# Redirect to front page
+	else:
+		return redirect('/')
 
 # Twitter login page.
 @app.route('/login/twitter', methods=['GET'])
@@ -164,7 +175,11 @@ def logout():
 @requires_login
 def logout_callback():
 	BetaUser.logout()
-	return redirect('/')
+	login_redirect_url = session.pop('login-redirect-url', None)
+	if login_redirect_url:
+		return redirect(login_redirect_url)
+	else:
+		return redirect('/')
 
 # Diagnostic report url for iOS client.
 @app.route('/diagnostics', methods=['POST'])
@@ -333,6 +348,33 @@ def faq():
 @requires_login
 def reportbug():
 	return render_template('reportbug.html')
+
+@app.route('/crashreporter')
+def crashreporter():
+	if not session.has_key('betauser'):
+		return redirect(url_for('crashreporter_login'))
+	return render_template('crashreporter.html')
+
+@app.route('/crashreporter/send', methods=['POST'])
+def crashreporter_send_log():
+	logging.info('NYI')
+	if not session.has_key('betauser'):
+		abort(404)
+	return ''
+
+@app.route('/crashreporter/help', methods=['GET'])
+def crashreporter_help():
+	return render_template('crashreporter-help.html')
+
+@app.route('/crashreporter/login')
+def crashreporter_login():
+	session['login-redirect-url'] = url_for('crashreporter')
+	return render_template('crashreporter-login.html')
+
+@app.route('/crashreporter/logout')
+def crashreporter_logout():
+	session['login-redirect-url'] = url_for('crashreporter')
+	return redirect(url_for('logout'))
 
 if __name__ == '__main__':
 	app.run()

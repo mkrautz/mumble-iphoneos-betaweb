@@ -53,9 +53,15 @@ def finish_login():
 	session['betauser'] = bu.key()
 	session.permanent = True
 
-	# We force a redirect to http:// (which means that even users on
-	# https:// connections get redirected to the non-TLS version).
-	# The reason for this is that App Engine's OpenID 'federated login'
-	# feature seems to break when using https://. fixme(mkrautz): Look
-	# into why that is.
-	return redirect('http://mumble-ios.appspot.com')
+	# Should we redirect to a specific page?
+	login_redirect_url = session.pop('login-redirect-url', None)
+	if login_redirect_url:
+		return redirect(login_redirect_url)
+	# Redirect to front page
+	else:
+		# We force a redirect to http:// (which means that even users on
+		# https:// connections get redirected to the non-TLS version).
+		# The reason for this is that App Engine's OpenID 'federated login'
+		# feature seems to break when using https://. fixme(mkrautz): Look
+		# into why that is.
+		return redirect('http://mumble-ios.appspot.com')

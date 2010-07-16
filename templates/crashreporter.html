@@ -1,0 +1,89 @@
+{% extends "embedded.html" %}
+
+{% block head %}
+<script type="text/javascript">
+// Called by our helper app when it's ready to handle us.
+function CrashReporterLoaded() {
+	// Reset crash reporter state.
+	crashreporter.resetState();
+
+	var devices = crashreporter.availableCrashReporterDevices();
+	
+	var devpicker = $("select#devpicker");		
+	var logpicker = $("select#logpicker");
+	var logcontent = $("textarea#logcontent");
+	var logsubmit = $("input#logsubmit");
+
+	devpicker.html('<option value=\"\">Select your device</option>');
+	devpicker.unbind('change');
+
+	logpicker.html('');
+	logpicker.unbind('change');
+
+	logcontent.html('');
+
+	logsubmit.attr('disabled', false);
+	logsubmit.unbind('click');
+
+	// Add all devices to the dev picker
+	$.each(devices, function(idx, val) {
+		devpicker.append($("<option></option>").attr("value", val).text(val));
+	});
+
+	// Device change handler
+	devpicker.bind('change', function(evt) {
+		var devName = evt.target.value;
+		logpicker.html('');
+		logcontent.html('');
+		var logs = crashreporter.crashFilesForDevice(devName);
+		$.each(logs, function(idx, val) {
+			logpicker.append($("<option></option>").attr("value", val).text(val));
+		});
+	});
+
+	// Crash log change handler
+	logpicker.bind('change', function(evt) {
+		var fileName = evt.target.value;
+		var devName = devpicker.val();
+		var contents = crashreporter.contentsOfCrashFileAsString(devName, fileName);
+		logcontent.html(contents);
+	});
+
+	// Submit logs
+	logsubmit.bind('click', function(evt) {
+		$(this).attr('disabled', true);
+		crashreporter.submitAllCrashLogs();
+		// When done, reload the crash reporter UI. The crash reporter
+		// might have removed files that it has already submitted to the
+		// server.
+		CrashReporterLoaded();
+	});
+}
+</script>
+{% endblock %}
+
+{% block titlecontent %}
+<a href="/crashreporter">Mumble for iOS Crash Reporter</a>
+{% endblock %}
+
+{% block content %}
+<h1>Report Crashes</h1>
+<div class="box">
+Welcome <strong>{{ g.betauser.name }}</strong>. (<a href="/crashreporter/logout">Log out?</a>)<br /><br />
+
+Device:<br />
+<select id="devpicker" style="width: 500px"></select>
+<br />
+
+Crash Logs:<br />
+<select id="logpicker" multiple="multiple" style="width: 500px"></select>
+<br />
+
+Content:<br />
+<textarea id="logcontent" style="width: 500px; height: 400px" readonly="true"></textarea>
+<br />
+
+<input id="logsubmit" type="button" value="Submit all crash reports" disabled="true" />
+
+</div>
+{% endblock %}

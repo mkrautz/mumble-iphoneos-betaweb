@@ -35,10 +35,17 @@
 		.leftcontainer {
 			float: left;
 		}
+		{% if embedded %}
+		.content {
+			padding-left: 20px;
+			padding-right: 20px;
+		}
+		{% else %}
 		.content {
 			padding-left: 420px;
 			padding-right: 20px;
 		}
+		{% endif %}
 		.box {
 			background-color: white;
 			box-shadow: 1px 1px 2px #666;

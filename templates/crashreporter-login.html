@@ -1,0 +1,97 @@
+{% extends "embedded.html" %}
+
+{% block head %}
+<script type="text/javascript">
+		function set_provider(name) {
+			var providernames = {
+				"openid-login": "OpenID",
+				"facebook-login": "Facebook",
+				"twitter-login": "Twitter",
+				"google-login": "Google Account",
+				"steam-login": "Steam Community",
+				"yahoo-login": "Yahoo ID",
+				"myopenid-login": "MyOpenID",
+				"aol-login": "Aol. Account",
+				"myspace-login": "MySpace",
+				"wordpress-login": "WordPress",
+				"verisign-login": "Verisign",
+			};
+			var providerurls = {
+				"openid-login": undefined,
+				"facebook-login": undefined,
+				"twitter-login": undefined,
+				"google-login": "gmail.com",
+				"steam-login": "steamcommunity.com/openid",
+				"yahoo-login": "yahoo.com",
+				"myopenid-login": "myopenid.com",
+				"aol-login": "aol.com",
+				"myspace-login": "myspace.com",
+				"wordpress-login": "wordpress.com",
+				"verisign-login": "pip.verisignlabs.com",
+			};
+			var provider = providernames[name];
+			var url = providerurls[name];
+	
+			$("#loginprovider").html(provider);
+			$("#loginbutton").attr("value", "Login through " + provider);
+
+			// Special case our OAuth logins
+			if (name == "facebook-login")
+				$("#loginform").attr("action", "/login/facebook");
+			else if (name == "twitter-login")
+				$("#loginform").attr("action", "/login/twitter");
+			else
+				$("#loginform").attr("action", "/login/openid");
+
+			// Only show text box for custom OpenID
+			if (name != "openid-login") {
+				$("#loginurl").hide();
+				$("#loginurl").attr("value", url);
+			} else {
+				$("#loginurl").attr("value", "");
+				$("#loginurl").show();
+			}
+		}
+
+		$(document).ready(function() {
+			$('.loginbutton').hover(function(evt) {
+				$('.loginbutton').removeClass('activelogin');
+				$(this).addClass('activelogin');
+				set_provider(this.id);
+			}, function(evt) {
+			});
+		});
+	</script>
+{% endblock %}
+
+{% block titlecontent %}
+<a href="/crashreporter">Mumble for iOS Crash Reporter</a>
+{% endblock %}
+
+{% block content %}
+			<h1>Log in</h1>
+			<div class="box">
+				Log into the crash reporter using one of the following identity providers:<br /><br />
+				<div class="loginproviders">
+					<div id="openid-login" class="loginbutton activelogin"><img width="16" height="16" src="http://www.openid.net/favicon.ico" /></div>
+					<div id="facebook-login" class="loginbutton"><img width="16" height="16" src="http://www.facebook.com/favicon.ico" /></div>
+					<div id="twitter-login" class="loginbutton"><img width="16" height="16" src="http://www.twitter.com/favicon.ico" /></div>
+					<div id ="google-login" class="loginbutton"><img width="16" height="16" src="http://www.google.com/favicon.ico" /></div>
+					<div id="steam-login" class="loginbutton"><img width="16" height="16" src="http://www.steampowered.com/favicon.ico" /></div>
+					<div id="yahoo-login" class="loginbutton"><img width="16" height="16" src="http://www.yahoo.com/favicon.ico" /></div>
+					<div id="myopenid-login" class="loginbutton"><img width="16" height="16" src="http://www.myopenid.com/favicon.ico" /></div>
+					<div id="aol-login" class="loginbutton"><img width="16" height="16" src="http://www.aol.com/favicon.ico" /></div>
+					<div id="myspace-login" class="loginbutton"><img width="16" height="16" src="http://www.myspace.com/favicon.ico" /></div>
+					<div id="wordpress-login" class="loginbutton"><img width="16" height="16" src="http://www.wordpress.com/favicon.ico" /></div>
+					<div id="verisign-login" class="loginbutton"><img width="16" height="16" src="http://www.verisign.com/favicon.ico" /></div>
+				</div>
+				<br />
+				<h2 id="loginprovider">OpenID</h2>
+				<form id="loginform" method="get" action="/login/openid">
+					<input id="loginurl" name="openid" type="text" value="" />
+					<input id="loginbutton" type="submit" value="Login using OpenID" />
+				</form>
+			</div>
+
+{% endblock %}
+</div>
