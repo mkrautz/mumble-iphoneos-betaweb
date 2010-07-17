@@ -44,6 +44,7 @@ def get_latest_commits(limit=5):
 	commits.extend(github.commits('mkrautz', 'mumble-iphoneos', limit=10))
 	commits.extend(github.commits('mkrautz', 'mumble-iphoneos-betaweb', limit=10))
 	commits.extend(github.commits('mkrautz', 'mumblekit', limit=10))
+	commits.extend(github.commits('mkrautz', 'mumble-ios-crashreporter', limit=10))
 
 	def datesort(d1, d2):
 		if d1['date'] > d2['date']:
@@ -55,7 +56,7 @@ def get_latest_commits(limit=5):
 	commits.sort(datesort)
 	return commits[:limit]
 
-@app.route('/_github_push', methods=['POST'])
+@app.route('/_github_push', methods=['GET', 'POST'])
 def github_push():
 	commits = get_latest_commits()
 	if not memcache.set('commits', commits, namespace='frontpage'):
