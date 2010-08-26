@@ -226,6 +226,22 @@ def participant_queue():
 	users = bu.fetch(100)
 	return render_template('profile-list.html', queue=users)
 
+@app.route('/beta-participants.csv', methods=['GET'])
+@requires_admin
+def beta_participants_csv():
+	sep = ','
+	if request.values.get('excel', None) is not None:
+		sep = ';'
+	bu = BetaUser.all()
+	bu.filter('participate =', True)
+	testers = [u for u in bu if u.inbeta]
+	buf = cStringIO.StringIO()
+	buf.write('# name, email, udid, devtype\n')
+	for u in testers:
+		buf.write(sep.join((u.name, u.email, u.udid, u.devtype))+'\n')
+	return Response(buf.getvalue(), mimetype='text/csv')
+
+
 @app.route('/viewprofile', methods=['GET'])
 @requires_admin
 def view_profile():
