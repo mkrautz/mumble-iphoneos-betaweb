@@ -87,14 +87,6 @@
 			font-size: 8px;
 			color: #666;
 		}
-		form input {
-			border: 1px solid black;
-			padding: 5px;
-			background-color: #cfcfcf;
-			font-size: 13px
-			-moz-border-radius: 7px;
-			-webkit-border-radius: 7px;
-		}
 		#box span {
 			line-height: 20px;
 		}
@@ -112,16 +104,14 @@
 		}
 		.loginbutton {
 			display: inline;
-			margin: 3px;
+			margin: 0px;
 			padding: 6px;
 			border: 3px solid white;
-			-moz-border-radius: 7px;
-			-webkit-border-radius: 7px;
 			vertical-align: middle;
 		}
 		.loginproviders {
 			margin: 3px;
 		}
 		.activelogin {
-			border: 3px solid orange;
+			border: 3px solid #8C9CB4;
 		}
