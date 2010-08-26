@@ -97,8 +97,18 @@ class BetaUser(db.Model):
 	lastlogin = db.DateTimeProperty(required=True)
 	# The UDID of the users device
 	udid = db.StringProperty()
+	# A device describing the device matching the UDID above
+	devtype = db.StringProperty()
+	# Wants to participate?
+	participate = db.BooleanProperty()
 	# The user's email address (for recovery purposes)
 	email = db.StringProperty()
+	# User's beta test "other comments" -- why should we pick *them*?
+	comments = db.StringProperty(multiline=True)
+	# Has the user been picked for the beta?
+	inbeta = db.BooleanProperty(default=False)
+	# Email notifications
+	emailnotify = db.BooleanProperty(default=False)
 
 	# Get the name of the user. Handles None names by giving a
 	# nicer display name such as 'Unknown User'.

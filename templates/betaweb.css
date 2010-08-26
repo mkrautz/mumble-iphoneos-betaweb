@@ -115,3 +115,9 @@
 		.activelogin {
 			border: 3px solid #8C9CB4;
 		}
+		.pinput {
+			width: 150px;
+		}
+		.descr {
+			font-size: 10px;
+		}

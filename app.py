@@ -7,6 +7,7 @@ from werkzeug import Response
 
 from google.appengine.api import memcache
 from google.appengine.api import users as gaeusers
+from google.appengine.api import mail
 from google.appengine.ext import blobstore
 from google.appengine.api.labs import taskqueue
 from google.appengine.ext import db
@@ -217,6 +218,53 @@ def latest_release():
 	}, buf)
 	return Response(buf.getvalue(), mimetype='text/plist')
 
+@app.route('/participant-queue', methods=['GET'])
+@requires_admin
+def participant_queue():
+	bu = BetaUser.all()
+	bu.filter('participate =', True)
+	users = bu.fetch(100)
+	return render_template('profile-list.html', queue=users)
+
+@app.route('/viewprofile', methods=['GET'])
+@requires_admin
+def view_profile():
+	key = request.values.get('key', None)
+	if key is None:
+		abort(404)
+	user = BetaUser.get(key)
+	return render_template('viewprofile.html', user=user)
+
+@app.route('/beta-enroll', methods=['POST'])
+@requires_admin
+def beta_enroll():
+	key = request.values.get('key', None)
+	if key is None:
+		abort(404)
+	user = BetaUser.get(key)
+	user.inbeta = True
+	user.save()
+	if user.emailnotify:
+		taskqueue.add(url=url_for('user_beta_status_change'), params={
+			'user-key': user.key(),
+		})
+	return redirect(url_for('view_profile', key=key))
+
+@app.route('/beta-remove', methods=['POST'])
+@requires_admin
+def beta_remove():
+	key = request.values.get('key', None)
+	if key is None:
+		abort(404)
+	user = BetaUser.get(key)
+	user.inbeta = False
+	user.save()
+	if user.emailnotify:
+		taskqueue.add(url=url_for('user_beta_status_change'), params={
+			'user-key': user.key(),
+		})
+	return redirect(url_for('view_profile', key=key))
+
 @app.route('/upload', methods=['GET'])
 @requires_admin
 def upload():
@@ -335,10 +383,49 @@ def beta_release_downloaded():
 		logging.warning('No-blob-key supplied to task handler. Nothing to do.')
 	return ''
 
+# Task handler for when a user's beta status changes
+@app.route('/_tasks/user-beta-status-change', methods=['POST'])
+def user_beta_status_change():
+	key = request.values.get('user-key', None)
+	if key:
+		user = BetaUser.get(key)
+		if user:
+			status = 'Not Participating'
+			if user.inbeta:
+				status = 'Participating'
+			mail.send_mail(sender='notify@mumble-ios.appspotmail.com',
+			          to=user.email,
+					  subject='[Mumble iOS Beta] Beta Status Change',
+					  body='''Hello %s!
+
+You are receiving this email to notify you that your beta status on the Mumble for iOS Beta Portal has changed.
+
+Your new status is '%s'
+
+Please visit the portal for further information.
+
+Thanks,
+Mumble for iOS Beta Team''' % (user.name, status))
+	return ''
+
+
 @app.route('/profile')
 @requires_login
 def profile():
 	return render_template('profile.html')
+
+@app.route('/profile/update', methods=['POST'])
+@requires_login
+def update_profile():
+	g.betauser.name = request.values.get('name')
+	g.betauser.email = request.values.get('email')
+	g.betauser.udid = request.values.get('udid')
+	g.betauser.devtype = request.values.get('devtype')
+	g.betauser.emailnotify = request.values.get('emailnotify', None) is not None
+	g.betauser.participate = request.values.get('participate', None) is not None
+	g.betauser.comments = request.values.get('comments')
+	g.betauser.save()
+	return redirect(url_for('profile'))
 
 @app.route('/faq')
 @requires_login
@@ -349,6 +436,11 @@ def faq():
 @requires_login
 def reportbug():
 	return render_template('reportbug.html')
+
+@app.route('/reportcrash')
+@requires_login
+def reportcrash():
+	return render_template('reportcrash.html')
 
 @app.route('/crashreporter')
 def crashreporter():

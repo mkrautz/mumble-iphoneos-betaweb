@@ -56,15 +56,22 @@
 			{% else %}
 			<div class="leftnav box">
 				Welcome, <strong><a href="/profile">{{ g.betauser.get_name() }}</a></strong>.<br />
+				Current status:
+				{% if g.betauser.inbeta %}
+				<strong style="color: green;">Participating</strong>.
+				{% else %}
+				<strong style="color: red;">Not Participating</strong>.
+				{% endif %}
+				<br /><br />
 
-				<br />
 				<strong>Navigation</strong>
 				<ul>
 					<li><a href="/">Index</a></li>
 					<li><a href="/profile">Profile</a></li>
 					<li><a href="/download">Downloads</a></li>
 					<li><a href="/faq">FAQ</a></li>
-					<li><a href="/reportbug">Report bug</a></li>
+					<li><a href="/reportbug">Report bug / Feedback</a></li>
+					<li><a href="/reportcrash">Report crash</a></li>
 					<li><a href="/logout">Log out</a></li>
 				</ul>
 
@@ -72,6 +79,7 @@
 				<strong>Admin</strong>
 				<ul>
 					<li><a href="/upload">Upload</a></li>
+					<li><a href="/participant-queue">Participant Queue</a></li>
 				</ul>
 				{% endif %}
 			</div>
