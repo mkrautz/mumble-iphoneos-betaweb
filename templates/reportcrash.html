@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block titlecontent %}
+<a href="/">Mumble for iOS Beta Portal</a>
+&#x25B8;
+<a href="/reportcrash">Report Crash</a>
+{% endblock %}
+
+{% block content %}
+<h1>Report Crash</h1>
+	<div class="box">
+		<p>
+			Crash reports are to be reported using the Mumble for iOS Crash Report program.<br /><br />
+			The program allows you to see through your crash logs and upload them to the beta portal.<br /><br />
+
+			<img src="/static/crashreport.png" />
+
+			Download the program for your operating system from the GitHub downloads page:<br />
+			<a href="http://github.com/mkrautz/mumble-ios-crashreporter/downloads">http://github.com/mkrautz/mumble-ios-crashreporter/downloads</a><br />
+
+			<br />
+			Any bugs in the crash reporter should be reported to crash reporter issue page:<br />
+			<a href="http://github.com/mkrautz/mumble-ios-crashreporter/issues">http://github.com/mkrautz/mumble-ios-crashreporter/issues</a><br />
+		</p>
+	</div>
+{% endblock %}

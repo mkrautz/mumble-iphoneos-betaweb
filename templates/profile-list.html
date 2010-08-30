@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block titlecontent %}
+<a href="/">Mumble for iOS Beta Portal</a>
+&#x25B8;
+<a href="/reportcrash">Participant Queue</a>
+{% endblock %}
+
+{% block content %}
+<h1>Participant Queue</h1>
+	<div class="box">
+		{% for user in queue %}
+		<table>
+			<tr>
+				<td>Name</td><td>{{ user.name }}</td>
+			</tr><tr>
+				<td>Device</td><td>{{ user.devtype }}</td>
+			</tr><tr>
+				<td>Comments</td><td>{{ user.comments }}</td>
+			</tr><tr>
+				<td>Profile</td><td><a href="/viewprofile?key={{ user.key() }}">{{ user.key() }}</a></td>
+			</tr>
+		</table>
+		<br />
+		{% endfor %}
+	</div>
+{% endblock %}

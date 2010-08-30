@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block titlecontent %}
+<a href="/">Mumble for iOS Beta Portal</a>
+&#x25B8;
+<a href="#">View Profile {{ key }}</a>
+{% endblock %}
+
+{% block content %}
+<h1>Viewing Profile {{ key }}</h1>
+	<div class="box">
+		<table>
+			<tr>
+				<td>Name</td>
+				<td><input disabled="disabled" class="pinput" type="text" name="name" value="{% if user.name %}{{ user.name }}{% endif %}" /></td>
+				<td class="descr">This should not necessarily be your real name, a nickname will do.</td>
+			</tr>
+			<tr>
+				<td>Email</td>
+				<td><input disabled="disabled" class="pinput" type="email" name="email" value="{% if user.email %}{{ user.email }}{% endif %}" /></td>
+				<td class="descr">Your email address will be used to notify you of any changes in your beta status and to reclaim lost login credentials.</td>
+			</tr>
+			<tr>
+				<td>UDID</td>
+				<td><input disabled="disabled" class="pinput" type="text" name="udid" value="{% if user.udid %}{{ user.udid }}{% endif %}" /></td>
+				<td class="descr">This is your device's UDID. This is used to allow your device to run the distributed .ipa files</td>
+			</tr>
+			<tr>
+				<td>Device</td>
+				<td><input disabled="disabled" class="pinput" type="text" name="devtype" value="{% if user.devtype %}{{ user.devtype }}{% endif %}" /></td>
+				<td class="descr">The device type corresponding to the UDID. Name and generation, if possible (i.e. iPhone 4, iPad, iPhone 3Gs)</td>
+			</tr>
+			<tr>
+				<td>Email Notifications</td>
+				<td><input disabled="disabled" class="pinput" type="checkbox" name="emailnotify" value="emailnotify" {%if user.emailnotify %} checked="true" {% endif %} /></td>
+				<td class="descr">Receieve notification when your beta status changes via email</td>
+			</tr>
+			<tr>
+				<td>Consider Me</td>
+				<td><input disabled="disabled" class="pinput" type="checkbox" name="participate" value="participate" {% if user.participate %} checked="true" {% endif %} /></td>
+				<td class="descr">Check this box if you wish to be considered for the beta test</td>
+			</tr>
+		</table>
+
+		<br />
+		Other Comments<br />
+		<span class="descr">Why should we pick you?</span><br />
+		<textarea disabled="disabled" cols="50" rows="10" name="comments">{% if user.comments %}{{ user.comments }}{% endif %}</textarea>
+		<br /><br />
+
+		Current status:
+		{% if user.inbeta %}
+		<form method="post" action="/beta-remove?key={{ user.key() }}">
+		<strong style="color: green;">Participating</strong>.
+		<input type="submit" value="Remove" />
+		</form>
+		{% else %}
+		<form method="post" action="/beta-enroll?key={{ user.key() }}">
+		<strong style="color: red;">Not Participating</strong>.
+		<input type="submit" value="Enroll" />
+		</form>
+		{% endif %}
+	</div>
+{% endblock %}
