@@ -479,10 +479,10 @@ def crashreporter_send_log():
 	if not session.has_key('betauser'):
 		abort(404)
 
+	data = request.stream.read()
+
 	# Add the report to the datastore
-	cr = CrashReport()
-	cr.data = request.data
-	cr.user = g.betauser
+	cr = CrashReport(data=data, user=g.betauser)
 	cr.put()
 
 	return ''

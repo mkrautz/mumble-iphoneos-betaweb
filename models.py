@@ -57,7 +57,7 @@ class BetaRelease(Download):
 	# Set the latest release (stored in memcache)
 	@classmethod
 	def set_latest_release(cls, key):
-		memcache.set('betarelease-latest-key', str(key))	
+		memcache.set('betarelease-latest-key', str(key), 86400)
 	
 	# Get the latest (as in date) BetaRelease using a memcache stored key.
 	# If that fails, we will query the datastore for the latest release, and
@@ -70,7 +70,7 @@ class BetaRelease(Download):
 			if not br:
 				logging.warning('Unable to get latest release from datastore.')
 				return None
-			memcache.set('betarelease-latest-key', str(br.key()))
+			memcache.set('betarelease-latest-key', str(br.key()), 86400)
 			return br
 		else:
 			return BetaRelease.get(key)
@@ -163,6 +163,6 @@ class BetaUser(db.Model):
 # A crash report
 class CrashReport(db.Model):
 	# The user who submitted the report
-	user = db.ReferenceProperty(BetaUser)
+	user = db.ReferenceProperty(BetaUser, required=True)
 	# The text of the crash report
-	data = db.StringProperty(required=True)
+	data = db.TextProperty(required=True)
