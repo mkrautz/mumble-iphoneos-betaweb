@@ -1,8 +1,8 @@
 from flask import Flask, g, abort, render_template, request, redirect, session, url_for
-try:
-	from django.utils.timesince import timesince
-except:
-	pass
+
+from django.utils.timesince import timesince as django_timesince
+from django.template.defaultfilters import date as django_date
+
 from werkzeug import Response
 
 from google.appengine.api import memcache
@@ -22,9 +22,11 @@ import cgi
 import settings
 app = Flask(__name__)
 app.secret_key = settings.APP_SECRET_KEY 
+
 if not app.jinja_env.filters.has_key('timesince'):
-	app.jinja_env.filters['timesince'] = timesince
-logging.info(app.jinja_env)
+	app.jinja_env.filters['timesince'] = django_timesince
+if not app.jinja_env.filters.has_key('date'):
+	app.jinja_env.filters['date'] = django_date
 
 import github
 import twitter

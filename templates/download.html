@@ -11,7 +11,7 @@
 	<h1>Latest Beta Release</h1>
 	<div class="box">
 		<a href="{{ latest_release.get_download_url() }}">{{ latest_release.filename }}</a><br />
-		Release Date: {{ latest_release.release_date }} ({{ latest_release.release_date|timesince }} ago)<br />
+		Release Date: {{ latest_release.release_date|date }} ({{ latest_release.release_date|timesince }} ago)<br />
 		Version: {{ latest_release.version }}<br />
 		Git Revision: {{ latest_release.gitrev }}<br />
 		SHA1 digest: {{ latest_release.sha1sum }}<br />
@@ -37,7 +37,7 @@
 	<div class="box">
 		{% for release in older_releases %}
 			<a href="{{ release.get_download_url() }}">{{ release.filename }}</a><br />
-			Release Date: {{ release.release_date }} ({{ release.release_date|timesince }} ago)<br />
+			Release Date: {{ release.release_date|date }} ({{ release.release_date|timesince }} ago)<br />
 			Version: {{ release.version }}<br />
 			Git Revision: {{ release.gitrev }}<br />
 			SHA1 digest: {{ release.sha1sum }}<br />
