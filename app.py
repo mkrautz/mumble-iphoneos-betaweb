@@ -35,7 +35,7 @@ from util import get_request_blobinfos, create_blobinfo_response, info_plist_for
 from util import udids_for_betarelease
 from util import parse_date, parse_float, parse_int
 from decorators import requires_notlogin, requires_login, requires_admin, requires_gaeadmin
-from models import DiagnosticReport, BetaRelease, BetaUser
+from models import DiagnosticReport, BetaRelease, BetaUser, CrashReport
 
 # Before-request handler to add the currently logged-in
 # user to the global object.
@@ -475,9 +475,16 @@ def crashreporter():
 
 @app.route('/crashreporter/send', methods=['POST'])
 def crashreporter_send_log():
-	logging.info('NYI')
+	# Only registered users can submit crash reports
 	if not session.has_key('betauser'):
 		abort(404)
+
+	# Add the report to the datastore
+	cr = CrashReport()
+	cr.data = request.data
+	cr.user = g.betauser
+	cr.put()
+
 	return ''
 
 @app.route('/crashreporter/help', methods=['GET'])

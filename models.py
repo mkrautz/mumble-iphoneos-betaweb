@@ -159,3 +159,10 @@ class BetaUser(db.Model):
 	@classmethod
 	def logout(cls):
 		session.pop('betauser', None)
+
+# A crash report
+class CrashReport(db.Model):
+	# The user who submitted the report
+	user = db.ReferenceProperty(BetaUser)
+	# The text of the crash report
+	data = db.StringProperty(required=True)
