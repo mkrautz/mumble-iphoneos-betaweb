@@ -9,13 +9,23 @@
 {% block content %}
 	{% if latest_release %}
 	<h1>Latest Beta Release</h1>
-			<div class="box">
-				<a href="{{ latest_release.get_download_url() }}">{{ latest_release.filename }}</a><br />
-				Release Date: {{ latest_release.release_date }} ({{ latest_release.release_date|timesince }} ago)<br />
-				Version: {{ latest_release.version }}<br />
-				Git Revision: {{ latest_release.gitrev }}<br />
-				SHA1 digest: {{ latest_release.sha1sum }}<br />
-			</div>
+	<div class="box">
+		<a href="{{ latest_release.get_download_url() }}">{{ latest_release.filename }}</a><br />
+		Release Date: {{ latest_release.release_date }} ({{ latest_release.release_date|timesince }} ago)<br />
+		Version: {{ latest_release.version }}<br />
+		Git Revision: {{ latest_release.gitrev }}<br />
+		SHA1 digest: {{ latest_release.sha1sum }}<br />
+		Provision status:
+		{% if latest_release.udids %}
+			{% if g.betauser.udid in latest_release.udids %}
+				<strong><span style="color: green">Provisioned for your device</span></strong>.
+			{% else %}
+				<strong><span style="color: red">Not provisioned for your device</span></strong>.
+			{% endif %}
+		{% else %}
+			No provisioning data available.
+		{% endif %}
+	</div>
 	{% else %}
 	<h1>No releases available</h1>
 	<div class="box">
@@ -26,12 +36,22 @@
 	<h1>Older Releases</h1>
 	<div class="box">
 		{% for release in older_releases %}
-				<a href="{{ release.get_download_url() }}">{{ release.filename }}</a><br />
-				Release Date: {{ release.release_date }} ({{ release.release_date|timesince }} ago)<br />
-				Version: {{ release.version }}<br />
-				Git Revision: {{ release.gitrev }}<br />
-				SHA1 digest: {{ release.sha1sum }}<br />
-				<br />
+			<a href="{{ release.get_download_url() }}">{{ release.filename }}</a><br />
+			Release Date: {{ release.release_date }} ({{ release.release_date|timesince }} ago)<br />
+			Version: {{ release.version }}<br />
+			Git Revision: {{ release.gitrev }}<br />
+			SHA1 digest: {{ release.sha1sum }}<br />
+			Provision status:
+			{% if release.udids %}
+				{% if g.betauser.udid in release.udids %}
+					<strong><span style="color: green">Provisioned for your device</span></strong>.
+				{% else %}
+					<strong><span style="color: red">Not provisioned for your device</span></strong>.
+				{% endif %}
+			{% else %}
+				No provisioning data available.
+			{% endif %}
+			<br /><br />
 		{% endfor %}
 	</div>
 	{% endif %}

@@ -4,6 +4,7 @@ import cgi
 import zipfile
 import datetime
 import hashlib
+import plistlib
 from cStringIO import StringIO
 from external.bplist import BPlistReader
 
@@ -66,6 +67,29 @@ def info_plist_for_betarelease(blobkey):
 			data = zf.read(fn)
 			dict = BPlistReader.plistWithString(data)
 	return dict
+
+# Returns a list of provisioned UDIDs for a BetaRelease
+def udids_for_betarelease(blobkey):
+	# First read the embedded.mobileprovision file...
+	provision = None
+	bs = blobstore.BlobReader(blobkey)
+	zf = zipfile.ZipFile(bs)
+	contents = zf.infolist()
+	for entry in contents:
+		fn = entry.filename
+		if fn == 'Payload/Mumble.app/embedded.mobileprovision':
+			provision = zf.read(fn)
+			break
+	if provision:
+		start = provision.find('<?xml')
+		end = provision.find('</plist>') + len('</plist>')
+		if start != -1:
+			s = provision[start:end]
+			buf = StringIO(s)
+			d = plistlib.readPlist(buf)
+			if d is not None:
+				return d.get('ProvisionedDevices', [])
+	return []
 
 # Return the sha1sum of a stored blob
 def get_blob_sha1sum(blobkey):

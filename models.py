@@ -44,6 +44,8 @@ class BetaRelease(Download):
 	gitrev = db.StringProperty(required=True)
 	# Version
 	version = db.StringProperty(required=True)
+	# Provisioned UDIDs
+	udids = db.StringListProperty()
 
 	# Get the latest (as in release date) BetaRelease from the datastore.
 	@classmethod

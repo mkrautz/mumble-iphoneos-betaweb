@@ -30,6 +30,7 @@ import github
 import twitter
 import facebook
 from util import get_request_blobinfos, create_blobinfo_response, info_plist_for_betarelease, get_blob_sha1sum
+from util import udids_for_betarelease
 from util import parse_date, parse_float, parse_int
 from decorators import requires_notlogin, requires_login, requires_admin, requires_gaeadmin
 from models import DiagnosticReport, BetaRelease, BetaUser
@@ -359,6 +360,11 @@ def create_beta_release():
 			datepart = builddate.strftime('%Y-%m-%d-%H%M')
 			fn = 'MumbleiOS-%s--%s--%s.ipa' % (version, datepart, gitrev)
 			sha1sum = get_blob_sha1sum(blobkey)
+
+			# Get the embedded.mobileprovision from the uploaded ipa
+			# and extract the list of provisioned UDIDs.
+			udids = udids_for_betarelease(blobkey)
+
 			rel = BetaRelease(blobkey=blobkey,
 			                  filename=fn,
 							  build_date=builddate,
@@ -366,7 +372,8 @@ def create_beta_release():
 							  version=version,
 							  downloads=0,
 							  release_date=datetime.datetime.now(),
-							  sha1sum=sha1sum)
+							  sha1sum=sha1sum,
+							  udids=udids)
 			rel.put()
 			logging.info('Successfully stored BetaRelease.');
 		else:
