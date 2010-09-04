@@ -34,7 +34,7 @@ function CrashReporterLoaded() {
 	devpicker.bind('change', function(evt) {
 		var devName = evt.target.value;
 		logpicker.html('');
-		logcontent.html('');
+		logcontent.text('');
 		var logs = crashreporter.crashFilesForDevice(devName);
 		$.each(logs, function(idx, val) {
 			logpicker.append($("<option></option>").attr("value", val).text(val));
@@ -46,7 +46,7 @@ function CrashReporterLoaded() {
 		var fileName = evt.target.value;
 		var devName = devpicker.val();
 		var contents = crashreporter.contentsOfCrashFileAsString(devName, fileName);
-		logcontent.html(contents);
+		logcontent.text(contents);
 	});
 
 	// Submit logs
