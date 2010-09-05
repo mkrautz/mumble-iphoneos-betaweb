@@ -68,7 +68,9 @@
 				<ul>
 					<li><a href="/">Index</a></li>
 					<li><a href="/profile">Profile</a></li>
+					{% if g.betauser.inbeta %}
 					<li><a href="/download">Downloads</a></li>
+					{% endif %}
 					<li><a href="/faq">FAQ</a></li>
 					<li><a href="/reportbug">Report bug / Feedback</a></li>
 					<li><a href="/reportcrash">Report crash</a></li>

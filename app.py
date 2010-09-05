@@ -310,6 +310,9 @@ def upload_handler():
 @app.route('/download')
 @requires_login
 def download():
+	if not g.betauser.inbeta:
+		abort(404)
+
 	# Get the latest release
 	latest_release = BetaRelease.get_latest_release()
 
@@ -329,6 +332,9 @@ def download():
 @app.route('/download/files/<filename>', methods=['GET'])
 @requires_login
 def download_by_filename(filename):
+	if not g.betauser.inbeta:
+		abort(404)
+
 	query = BetaRelease.all()
 	query.filter('filename =', filename)
 	release = query.get()
