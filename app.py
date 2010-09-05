@@ -33,7 +33,7 @@ import twitter
 import facebook
 from util import get_request_blobinfos, create_blobinfo_response, info_plist_for_betarelease, get_blob_sha1sum
 from util import udids_for_betarelease
-from util import parse_date, parse_float, parse_int
+from util import parse_date_epoch, parse_float, parse_int
 from decorators import requires_notlogin, requires_login, requires_admin, requires_gaeadmin
 from models import DiagnosticReport, BetaRelease, BetaUser, CrashReport
 
@@ -190,9 +190,9 @@ def logout_callback():
 @app.route('/diagnostics', methods=['POST'])
 def diagnostics_submit():
 	required = set(('device', 'operating-system', 'udid', 'version', 'git-revision',
-	                'build-date', 'time-since-launch', 'preprocessor-avg-runtime'))
+	                'build-date-epoch', 'time-since-launch', 'preprocessor-avg-runtime'))
 	if not required.issubset(set(request.form.keys())):
-		return ''
+		abort(404)
 
 	report = DiagnosticReport()
 	report.submit_date = datetime.datetime.utcnow()
@@ -201,7 +201,7 @@ def diagnostics_submit():
 	report.udid = request.form['udid'].rstrip()
 	report.version = request.form['version'].rstrip()
 	report.gitrev = request.form['git-revision'].rstrip()
-	report.build_date = parse_date(request.form['build-date'])
+	report.build_date = parse_date_epoch(request.form['build-date-epoch'])
 	report.time_since_launch = parse_float(request.form['time-since-launch'])
 	report.preprocessor_avg_runtime = parse_int(request.form['preprocessor-avg-runtime'])
 	report.put()

@@ -3,6 +3,7 @@ from werkzeug import Response
 import cgi
 import zipfile
 import datetime
+import time
 import hashlib
 import plistlib
 from cStringIO import StringIO
@@ -12,6 +13,14 @@ from external.bplist import BPlistReader
 def parse_date(str):
 	try:
 		return datetime.datetime.strptime(str.rstrip(), '%Y-%m-%d %H:%M:%S')
+	except:
+		return None
+
+# Parse a string float representation of seconds since the Unix epoch
+def parse_date_epoch(str):
+	try:
+		secs = float(str)
+		return datetime.datetime(*time.gmtime(secs)[0:6])
 	except:
 		return None
 
