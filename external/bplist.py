@@ -4,6 +4,8 @@
 #
 
 import struct
+import datetime
+import time
 
 class BPListWriter(object):
     def __init__(self, objects):
@@ -89,6 +91,14 @@ class BPlistReader(object):
             objref = offset+1
         return obj_count, objref
 
+    def __unpackDate(self, offset):
+        '''__unpackDate(offset) -> datetime
+
+        Unpacks a date from a plist at the given offset
+        '''
+        date = struct.unpack('!d', self.data[offset+1:offset+9])[0]
+        return datetime.datetime(*time.gmtime(date+978307200)[0:6])
+
     def __unpackItem(self, offset):
         '''__unpackItem(offset)
         
@@ -112,7 +122,7 @@ class BPlistReader(object):
         elif obj_type == 0x20: #    real    0010 nnnn   ...     // # of bytes is 2^nnnn, big-endian bytes
             return # FIXME: implement
         elif obj_type == 0x30: #    date    0011 0011   ...     // 8 byte float follows, big-endian bytes
-            return # FIXME: implement
+            return self.__unpackDate(offset)
         elif obj_type == 0x40: #    data    0100 nnnn   [int]   ... // nnnn is number of bytes unless 1111 then int count follows, followed by bytes
             obj_count, objref = self.__resolveIntSize(obj_info, offset)
             return self.data[objref:objref+obj_count] # XXX: we return data as str

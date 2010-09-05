@@ -358,7 +358,7 @@ def create_beta_release():
 		if dict:
 			version = dict['CFBundleVersion']
 			gitrev = dict['MumbleGitRevision']
-			builddate = parse_date(dict['MumbleBuildDate'])
+			builddate = dict['MumbleBuildDate']
 			datepart = builddate.strftime('%Y-%m-%d-%H%M')
 			fn = 'MumbleiOS-%s--%s--%s.ipa' % (version, datepart, gitrev)
 			sha1sum = get_blob_sha1sum(blobkey)
