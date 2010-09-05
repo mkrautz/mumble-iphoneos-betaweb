@@ -216,7 +216,7 @@ def latest_release():
 	br = BetaRelease.get_latest_release()
 	buf = cStringIO.StringIO()
 	plistlib.writePlist({
-		'GitRevision':         br.gitrev,
+		'MumbleGitRevision':   br.gitrev,
 		'MumbleBuildDate':     br.build_date,
 	}, buf)
 	return Response(buf.getvalue(), mimetype='text/plist')
