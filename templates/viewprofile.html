@@ -31,6 +31,11 @@
 				<td class="descr">The device type corresponding to the UDID. Name and generation, if possible (i.e. iPhone 4, iPad, iPhone 3Gs)</td>
 			</tr>
 			<tr>
+				<td>OS version</td>
+				<td><input disabled="disabled" class="pinput" type="text" name="osver" value="{% if user.osver %}{{ user.osver }}{% endif %}" /></td>
+				<td class="descr">The version of iPhoneOS or iOS that your device is running</td>
+			</tr>
+			<tr>
 				<td>Email Notifications</td>
 				<td><input disabled="disabled" class="pinput" type="checkbox" name="emailnotify" value="emailnotify" {%if user.emailnotify %} checked="true" {% endif %} /></td>
 				<td class="descr">Receieve notification when your beta status changes via email</td>

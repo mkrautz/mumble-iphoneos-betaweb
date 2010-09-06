@@ -111,6 +111,8 @@ class BetaUser(db.Model):
 	inbeta = db.BooleanProperty(default=False)
 	# Email notifications
 	emailnotify = db.BooleanProperty(default=False)
+	# OS version
+	osver = db.StringProperty()
 
 	# Get the name of the user. Handles None names by giving a
 	# nicer display name such as 'Unknown User'.

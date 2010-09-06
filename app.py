@@ -452,6 +452,7 @@ def update_profile():
 	g.betauser.email = request.values.get('email')
 	g.betauser.udid = request.values.get('udid')
 	g.betauser.devtype = request.values.get('devtype')
+	g.betauser.osver = request.values.get('osver')
 	g.betauser.emailnotify = request.values.get('emailnotify', None) is not None
 	g.betauser.participate = request.values.get('participate', None) is not None
 	g.betauser.comments = request.values.get('comments')
