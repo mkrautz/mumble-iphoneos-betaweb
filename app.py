@@ -241,7 +241,8 @@ def beta_participants_csv():
 	buf = cStringIO.StringIO()
 	buf.write('# name, email, udid, devtype\n')
 	for u in testers:
-		buf.write(sep.join((u.name, u.email, u.udid, u.devtype))+'\n')
+		s = sep.join((u.name, u.email, u.udid, u.devtype))+'\n'
+		buf.write(s.encode('utf-8'))
 	return Response(buf.getvalue(), mimetype='text/csv')
 
 
