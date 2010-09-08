@@ -62,7 +62,20 @@
 					<br />
 					Other Comments<br />
 					<span class="descr">Why should we pick you?</span><br />
-					<textarea cols="50" rows="10" name="comments">{% if g.betauser.comments %}{{ g.betauser.comments }}{% endif %}</textarea>
+					<textarea id="tacomm" cols="50" rows="10" name="comments">{% if g.betauser.comments %}{{ g.betauser.comments }}{% endif %}</textarea><br />
+					<span id="tachars"><span id="taleft">0</span>/450 characters</span>
+					<script>
+						var updateCount = function() {
+							var obj = document.getElementById('tacomm');
+							var length = obj.value.length;
+							if (length > 450) {
+								obj.value = obj.value.substring(0, 450);
+							}
+							$('#taleft').text(length);
+						};
+						$('#tacomm').live('keyup', updateCount).live('paste', updateCount);
+						updateCount();
+					</script>
 					<br /><br />
 
 					<input type="submit" value="Update" />

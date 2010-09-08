@@ -190,7 +190,7 @@ def logout_callback():
 @app.route('/diagnostics', methods=['POST'])
 def diagnostics_submit():
 	required = set(('device', 'operating-system', 'udid', 'version', 'git-revision',
-	                'build-date-epoch', 'time-since-launch', 'preprocessor-avg-runtime'))
+					'build-date-epoch', 'time-since-launch', 'preprocessor-avg-runtime'))
 	if not required.issubset(set(request.form.keys())):
 		abort(404)
 
@@ -375,7 +375,7 @@ def create_beta_release():
 			udids = udids_for_betarelease(blobkey)
 
 			rel = BetaRelease(blobkey=blobkey,
-			                  filename=fn,
+							  filename=fn,
 							  build_date=builddate,
 							  gitrev=gitrev,
 							  version=version,
@@ -426,7 +426,7 @@ def user_beta_status_change():
 			if user.inbeta:
 				status = 'Participating'
 			mail.send_mail(sender='notify@mumble-ios.appspotmail.com',
-			          to=user.email,
+					  to=user.email,
 					  subject='[Mumble iOS Beta] Beta Status Change',
 					  body='''Hello %s!
 
@@ -449,6 +449,10 @@ def profile():
 @app.route('/profile/update', methods=['POST'])
 @requires_login
 def update_profile():
+	comments = request.values.get('comments').encode('utf-8')
+	if len(comments) > 500:
+		abort(404)
+
 	g.betauser.name = request.values.get('name')
 	g.betauser.email = request.values.get('email')
 	g.betauser.udid = request.values.get('udid')
