@@ -51,7 +51,7 @@ class BetaRelease(Download):
 	@classmethod
 	def get_latest_release_from_datastore(cls):
 		query = BetaRelease.all()
-		query.order('release_date')
+		query.order('-release_date')
 		return query.get()
 
 	# Set the latest release (stored in memcache)
