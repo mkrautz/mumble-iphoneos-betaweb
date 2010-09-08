@@ -14,10 +14,9 @@ handlers:
   secure: optional
   login: admin
 
+- url: /remote_api
+  script: remoteapi.py
+
 - url: /.*
   script: runner.py
   secure: optional
-
-- url: /remote_api
-  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
-  login: admin
