@@ -243,12 +243,16 @@ def beta_participants_csv():
 	sep = ','
 	if request.values.get('excel', None) is not None:
 		sep = ';'
+	notprov = request.values.get('notprovisioned', None) is not None
 	bu = BetaUser.all()
 	bu.filter('participate =', True)
 	testers = [u for u in bu if u.inbeta]
 	buf = cStringIO.StringIO()
 	buf.write('# name, email, udid, devtype\n')
 	for u in testers:
+		br = BetaRelease.get_latest_release()
+		if notprov and br.udids is not None and u.udid in br.udids:
+			continue
 		s = sep.join((u.name, u.email, u.udid, u.devtype))+'\n'
 		buf.write(s.encode('utf-8'))
 	return Response(buf.getvalue(), mimetype='text/csv')
