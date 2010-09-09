@@ -224,10 +224,18 @@ def latest_release():
 @app.route('/participant-queue', methods=['GET'])
 @requires_admin
 def participant_queue():
+	fetch = request.values.get('fetch', 'all')
 	bu = BetaUser.all()
 	bu.filter('participate =', True)
 	users = bu.fetch(100)
-	return render_template('profile-list.html', queue=users)
+	queue = []
+	if fetch == 'all':
+		queue = users
+	elif fetch == 'notinbeta':
+		queue = [u for u in users if not u.inbeta]
+	elif fetch == 'inbeta':
+		queue = [u for u in users if u.inbeta]
+	return render_template('profile-list.html', queue=queue)
 
 @app.route('/beta-participants.csv', methods=['GET'])
 @requires_admin

@@ -12,11 +12,24 @@
 		{% for user in queue %}
 		<table>
 			<tr>
-				<td>Name</td><td>{{ user.name }}</td>
+				<td>Name</td><td>{% if user.name %}{{ user.name }}{% endif %}</td>
 			</tr><tr>
-				<td>Device</td><td>{{ user.devtype }}</td>
+				<td>Email</td><td>{% if user.email %}{{ user.email }}{% endif %}</td>
 			</tr><tr>
-				<td>Comments</td><td>{{ user.comments }}</td>
+				<td>Device</td><td>{% if user.devtype %}{{ user.devtype }}{% endif %}</td>
+			</tr><tr>
+				<td>UDID</td><td>{% if user.udid %}{{ user.udid }}{% endif %}</td>
+			</tr><tr>
+				<td>OS</td><td>{% if user.osver %}{{ user.osver }}{% endif %}</td>
+			</tr><tr>
+				<td>Comments</td><td>{% if user.comments %}{{ user.comments }}{% endif %}</td>
+			</tr><tr>
+				<td>Status</td>
+				{% if user.inbeta %}
+				<td><strong style="color: green;">Participating</strong></td>
+				{% else %}
+				<td><strong style="color: red;">Not Participating</strong></td>
+				{% endif %}
 			</tr><tr>
 				<td>Profile</td><td><a href="/viewprofile?key={{ user.key() }}">{{ user.key() }}</a></td>
 			</tr>
