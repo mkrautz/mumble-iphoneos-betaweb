@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ ! -n "${MUMBLE_IOS_REMOTEAPI_KEY}" ]; then
+	echo "No RemoteAPI key set"
+	exit
+fi
+
+curl https://mumble-ios.appspot.com/crashreporter/fetch-unsymbolicated -H "X-RemoteAPI-Key: ${MUMBLE_IOS_REMOTEAPI_KEY}" > /tmp/crashes.zip
+rm -rf /tmp/crashes-mumble-ios/
+mkdir -p /tmp/crashes-mumble-ios/
+cd /tmp/crashes-mumble-ios/
+if [ $(du /tmp/crashes.zip | cut -f1) -gt 0 ]; then
+	unzip /tmp/crashes.zip
+	chmod +r *
+	mkdir -p output
+	for i in `ls`; do
+		/Developer/Platforms/iPhoneOS.platform/Developer/Library/PrivateFrameworks/DTDeviceKit.framework/Versions/A/Resources/symbolicatecrash -v -o output/$i $i
+	done
+	cd output
+	zip symbolicated.zip *
+	curl https://mumble-ios.appspot.com/crashreporter/push-symbolicated -H "X-RemoteAPI-Key: ${MUMBLE_IOS_REMOTEAPI_KEY}" -H "Content-Type: application/zip" --data-binary @symbolicated.zip
+fi

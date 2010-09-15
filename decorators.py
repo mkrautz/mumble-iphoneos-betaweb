@@ -1,8 +1,9 @@
-from flask import Flask, g, abort
+from flask import Flask, g, abort, request
 from google.appengine.api import users as gaeusers
 
 import logging
 from functools import wraps
+from settings import GAE_REMOTEAPI_SECRET
 
 from models import BetaUser
 
@@ -44,6 +45,18 @@ def requires_gaeadmin(f):
 	@wraps(f)
 	def decorated(*args, **kwargs):
 		if not gaeusers.is_current_user_admin():
+			abort(404)
+		return f(*args, **kwargs)
+	return decorated
+
+# Decorator that requires a valid remote api key
+def requires_remoteapi(f):
+	@wraps(f)
+	def decorated(*args, **kwargs):
+		rkey = request.headers.get('X-RemoteAPI-Key', None)
+		if rkey is None:
+			abort(404)
+		if rkey != GAE_REMOTEAPI_SECRET:
 			abort(404)
 		return f(*args, **kwargs)
 	return decorated

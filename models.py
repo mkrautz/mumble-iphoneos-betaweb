@@ -168,3 +168,7 @@ class CrashReport(db.Model):
 	user = db.ReferenceProperty(BetaUser, required=True)
 	# The text of the crash report
 	data = db.TextProperty(required=True)
+	# Whether or not the CrashReport has been symbolicated (because TextProperties are not filterable)
+	symbolicated = db.BooleanProperty(default=False)
+	# The symbolicated data
+	symbolicated_data = db.TextProperty(default='')

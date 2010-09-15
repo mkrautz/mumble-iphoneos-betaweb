@@ -17,6 +17,7 @@ import logging
 import datetime
 import plistlib
 import cStringIO
+import zipfile
 import cgi
 
 import settings
@@ -34,7 +35,7 @@ import facebook
 from util import get_request_blobinfos, create_blobinfo_response, info_plist_for_betarelease, get_blob_sha1sum
 from util import udids_for_betarelease
 from util import parse_date_epoch, parse_float, parse_int
-from decorators import requires_notlogin, requires_login, requires_admin, requires_gaeadmin
+from decorators import requires_notlogin, requires_login, requires_admin, requires_gaeadmin, requires_remoteapi
 from models import DiagnosticReport, BetaRelease, BetaUser, CrashReport
 
 # Before-request handler to add the currently logged-in
@@ -524,6 +525,42 @@ def crashreporter_login():
 def crashreporter_logout():
 	session['login-redirect-url'] = url_for('crashreporter')
 	return redirect(url_for('logout'))
+
+@app.route('/crashreporter/fetch-unsymbolicated')
+@requires_remoteapi
+def crashreporter_fetch_unsymbolicated():
+	query = CrashReport.all()
+	query.filter('symbolicated !=', True)
+	reports = query.fetch(100)
+
+	if len(reports) == 0:
+		return ''
+
+	memzip = cStringIO.StringIO()
+	zf = zipfile.ZipFile(memzip, 'w')
+	for report in reports:
+		zf.writestr(str(report.key()), report.data)
+	zf.close()
+
+	return Response(memzip.getvalue(), mimetype='application/zip')
+
+@app.route('/crashreporter/push-symbolicated', methods=['POST'])
+@requires_remoteapi
+def crashreporter_push_symbolicated():
+	data = request.stream.read()
+
+	buf = cStringIO.StringIO(data)
+	zf = zipfile.ZipFile(buf, 'r')
+	for i in zf.infolist():
+		contents = zf.read(i.filename)
+		cr = CrashReport.get(i.filename)
+		if cr is not None and not cr.symbolicated:
+			cr.symbolicated = True
+			cr.symbolicated_data = contents
+			cr.save()
+	zf.close()
+
+	return ''
 
 if __name__ == '__main__':
 	app.run()
