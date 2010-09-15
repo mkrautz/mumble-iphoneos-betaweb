@@ -49,6 +49,7 @@ def finish_login():
 		# Get the access token
 		resp, content = client.request('https://api.twitter.com/oauth/access_token', 'GET')
 		data = dict(cgi.parse_qsl(content))
+		logging.info(data)
 
 		# Get existing or create a new user.
 		bu = BetaUser.get_twitter_user(data['user_id'])
