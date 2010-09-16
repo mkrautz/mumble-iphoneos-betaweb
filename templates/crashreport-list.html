@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block titlecontent %}
+<a href="/">Mumble for iOS Beta Portal</a>
+&#x25B8;
+<a href="/crashreports">Crash Reports</a>
+{% endblock %}
+
+{% block content %}
+<h1>Crash Reports</h1>
+	<div class="box">
+		{% for crash in reports %}
+		<a href="/crashreports/view/{{ crash.key() }}">{{ crash.key() }}</a><br />
+		{% endfor %}
+	</div>
+{% endblock %}

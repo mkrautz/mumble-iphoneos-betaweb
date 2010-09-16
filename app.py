@@ -562,5 +562,21 @@ def crashreporter_push_symbolicated():
 
 	return ''
 
+@app.route('/crashreports', methods=['GET'])
+@requires_admin
+def view_crashreport_listing():
+	query = CrashReport.all()
+	query.filter('symbolicated =', True)
+	reports = query.fetch(150)
+	return render_template('crashreport-list.html', reports=reports)
+
+@app.route('/crashreports/view/<key>', methods=['GET'])
+@requires_admin
+def view_crashreport(key):
+	cr = CrashReport.get(key)
+	if cr is None:
+		abort(404)
+	return Response(cr.symbolicated_data, mimetype='text/plain')
+
 if __name__ == '__main__':
 	app.run()

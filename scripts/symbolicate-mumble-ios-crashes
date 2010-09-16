@@ -9,7 +9,7 @@ curl https://mumble-ios.appspot.com/crashreporter/fetch-unsymbolicated -H "X-Rem
 rm -rf /tmp/crashes-mumble-ios/
 mkdir -p /tmp/crashes-mumble-ios/
 cd /tmp/crashes-mumble-ios/
-if [ $(du /tmp/crashes.zip | cut -f1) -gt 0 ]; then
+if [[ $(du /tmp/crashes.zip | cut -f1) -gt 0 && "$(file -b /tmp/crashes.zip)" == "Zip archive data, at least v2.0 to extract" ]]; then
 	unzip /tmp/crashes.zip
 	chmod +r *
 	mkdir -p output
