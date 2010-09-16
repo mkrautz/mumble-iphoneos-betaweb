@@ -54,8 +54,8 @@
 						</tr>
 						<tr>
 							<td>Consider Me</td>
-							<td><input class="pinput" type="checkbox" name="participate" value="participate" {% if g.betauser.participate %} checked="true" {% endif %} /></td>
-							<td class="descr">Check this box if you wish to be considered for the beta test</td>
+							<td><input disabled="disabled" class="pinput" type="checkbox" name="participate" value="participate" {% if g.betauser.participate %} checked="true" {% endif %} /></td>
+							<td class="descr"><span style="color: red;">The first stage of the beta test has reached its participant limit. We can't take in more beta testers at the moment.</span></td>
 						</tr>
 					</table>
 
