@@ -172,3 +172,5 @@ class CrashReport(db.Model):
 	symbolicated = db.BooleanProperty(default=False)
 	# The symbolicated data
 	symbolicated_data = db.TextProperty(default='')
+	# The BetaRelease that this crash happened with
+	betarelease = db.ReferenceProperty(BetaRelease, required=False)

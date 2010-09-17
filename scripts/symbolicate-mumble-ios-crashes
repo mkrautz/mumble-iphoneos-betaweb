@@ -13,9 +13,19 @@ if [[ $(du /tmp/crashes.zip | cut -f1) -gt 0 && "$(file -b /tmp/crashes.zip)" ==
 	unzip /tmp/crashes.zip
 	chmod +r *
 	mkdir -p output
+
 	for i in `ls`; do
+		if [ "${i}" == "output" ]; then continue; fi
 		/Developer/Platforms/iPhoneOS.platform/Developer/Library/PrivateFrameworks/DTDeviceKit.framework/Versions/A/Resources/symbolicatecrash -v -o output/$i $i
+		uuid=$(grep "+Mumble" "${i}" | sed 's,.*<,,' | sed 's,>.*,,')
+		uuid_proper=$(echo "import uuid; u=uuid.UUID('${uuid}'); print '%.8X-%.4X-%.4X-%.2X%.2X-%.12X'%(u.fields)" | python -)
+		dsym=$(mdfind com_apple_xcode_dsym_uuids="${uuid_proper}" | head -n1 | grep "Archived Applications")
+		if [ -n "${dsym}" ]; then
+			plist="$(echo "${dsym}" | sed 's,\.dSYM,,')/Info.plist"
+			cp "${plist}" "output/${i}.plist"
+		fi
 	done
+
 	cd output
 	zip symbolicated.zip *
 	curl https://mumble-ios.appspot.com/crashreporter/push-symbolicated -H "X-RemoteAPI-Key: ${MUMBLE_IOS_REMOTEAPI_KEY}" -H "Content-Type: application/zip" --data-binary @symbolicated.zip

@@ -37,6 +37,7 @@ from util import udids_for_betarelease
 from util import parse_date_epoch, parse_float, parse_int
 from decorators import requires_notlogin, requires_login, requires_admin, requires_gaeadmin, requires_remoteapi
 from models import DiagnosticReport, BetaRelease, BetaUser, CrashReport
+from external.bplist import BPlistReader
 
 # Before-request handler to add the currently logged-in
 # user to the global object.
@@ -548,15 +549,24 @@ def crashreporter_fetch_unsymbolicated():
 @requires_remoteapi
 def crashreporter_push_symbolicated():
 	data = request.stream.read()
-
 	buf = cStringIO.StringIO(data)
 	zf = zipfile.ZipFile(buf, 'r')
 	for i in zf.infolist():
+		key, ext = os.path.splitext(i.filename)
 		contents = zf.read(i.filename)
-		cr = CrashReport.get(i.filename)
-		if cr is not None and not cr.symbolicated:
-			cr.symbolicated = True
-			cr.symbolicated_data = contents
+		cr = CrashReport.get(key)
+		if cr is not None:
+			if ext == '' and not cr.symbolicated:
+				cr.symbolicated = True
+				cr.symbolicated_data = contents
+			elif ext == '.plist':
+				d = BPlistReader.plistWithString(contents)
+				query = BetaRelease.all()
+				query.filter('gitrev =', d.get('MumbleGitRevision', None))
+				query.filter('build_date =', d.get('MumbleBuildDate', None))
+				br = query.get()
+				if br is not None:
+					cr.betarelease = br
 			cr.save()
 	zf.close()
 
