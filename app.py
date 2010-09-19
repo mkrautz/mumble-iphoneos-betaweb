@@ -398,7 +398,11 @@ def create_beta_release():
 							  sha1sum=sha1sum,
 							  udids=udids)
 			rel.put()
+			taskqueue.add(url=url_for('notify_beta_release'), params={
+				'key': rel.key(),
+			})
 			logging.info('Successfully stored BetaRelease.');
+
 		else:
 			logging.warning('Unable to parse bplist.')
 	else:
@@ -407,6 +411,37 @@ def create_beta_release():
 	# Make sure memcache is up-to-date.
 	BetaRelease.set_latest_release(rel.key())
 
+	return ''
+
+# Notify BetaUsers of a new BetaRelease
+@app.route('/_tasks/release-notify-email', methods=['POST'])
+def notify_beta_release():
+	key = request.values.get('key', None)
+	if key is None:
+		logging.error('No key specified')
+		abort(404)
+	br = BetaRelease.get(key)
+	if br is None:
+		logging.error('No such BetaRelease')
+		abort(404)
+
+	query = BetaUser.all()
+	query.filter('inbeta =', True)
+	query.filter('emailnotify =', True)
+	bu = query.fetch(200)
+	emails = [ u.email for u in bu ]
+	mail.send_mail(sender='notify@mumble-ios.appspotmail.com',
+	               to='devnull@mumble-ios.appspot.com',
+	               bcc=emails,
+	               subject='[Mumble iOS Beta] New Beta Release: %s %s' % (br.version, br.gitrev),
+	body='''Hello Mumble for iOS beta tester!
+
+You are receiving this email to notify you that a new beta release is available on the Mumble for iOS Beta Portal.
+
+Download it from https://mumble-ios.appspot.com%s
+
+Enjoy,
+Mumble for iOS Beta Team''' % (br.get_download_url()))
 	return ''
 
 # Task handler for incrementing the download counter for BetaReleases.
