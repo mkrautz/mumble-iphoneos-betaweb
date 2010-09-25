@@ -2,6 +2,7 @@ from flask import Flask, g, abort, render_template, request, redirect, session, 
 
 from django.utils.timesince import timesince as django_timesince
 from django.template.defaultfilters import date as django_date
+from django.utils import simplejson as json
 
 from werkzeug import Response
 
@@ -61,6 +62,21 @@ def get_latest_commits(limit=5):
 			return 0
 	commits.sort(datesort)
 	return commits[:limit]
+
+def get_emailable_betausers():
+	query = BetaUser.all()
+	query.filter('inbeta =', True)
+	query.filter('emailnotify =', True)
+	bu = query.fetch(200)
+	return [ u.email for u in bu ]
+
+def send_email_notification(subject, body):
+	taskqueue.add(url=url_for('betauser_email_notification'), payload=json.dumps({
+		'subject':  subject,
+		'body':     body,
+	}), headers={
+		'Content-Type': 'application/json'
+	})
 
 @app.route('/_github_push', methods=['GET', 'POST'])
 def github_push():
@@ -398,9 +414,18 @@ def create_beta_release():
 							  sha1sum=sha1sum,
 							  udids=udids)
 			rel.put()
-			taskqueue.add(url=url_for('notify_beta_release'), params={
-				'key': rel.key(),
-			})
+
+
+			subject='[Mumble iOS Beta] New Beta Release: %s %s' % (br.version, br.gitrev),
+			body='''Hello Mumble for iOS beta tester!
+
+You are receiving this email to notify you that a new beta release is available on the Mumble for iOS Beta Portal.
+
+Download it from https://mumble-ios.appspot.com%s
+
+Enjoy,
+Mumble for iOS Beta Team''' % (br.get_download_url())
+			send_email_notification(subject, body)
 			logging.info('Successfully stored BetaRelease.');
 
 		else:
@@ -413,35 +438,17 @@ def create_beta_release():
 
 	return ''
 
-# Notify BetaUsers of a new BetaRelease
-@app.route('/_tasks/release-notify-email', methods=['POST'])
-def notify_beta_release():
-	key = request.values.get('key', None)
-	if key is None:
-		logging.error('No key specified')
-		abort(404)
-	br = BetaRelease.get(key)
-	if br is None:
-		logging.error('No such BetaRelease')
-		abort(404)
-
-	query = BetaUser.all()
-	query.filter('inbeta =', True)
-	query.filter('emailnotify =', True)
-	bu = query.fetch(200)
-	emails = [ u.email for u in bu ]
+# Task handler for emailing all notification-enabled BetaUsers
+@app.route('/_tasks/betauser-email-notification', methods=['POST'])
+def betauser_email_notification():
+	data = request.stream.read()
+	params = json.loads(data)
+	emails = get_emailable_betausers()
 	mail.send_mail(sender='notify@mumble-ios.appspotmail.com',
-	               to='devnull@mumble-ios.appspot.com',
+	               to='devnull@mumble-ios.appspotmail.com',
 	               bcc=emails,
-	               subject='[Mumble iOS Beta] New Beta Release: %s %s' % (br.version, br.gitrev),
-	body='''Hello Mumble for iOS beta tester!
-
-You are receiving this email to notify you that a new beta release is available on the Mumble for iOS Beta Portal.
-
-Download it from https://mumble-ios.appspot.com%s
-
-Enjoy,
-Mumble for iOS Beta Team''' % (br.get_download_url()))
+	               subject=params.get('subject', 'Mumble for iOS Beta Email Notification'),
+	               body=params.get('body', ''))
 	return ''
 
 # Task handler for incrementing the download counter for BetaReleases.
@@ -622,6 +629,17 @@ def view_crashreport(key):
 	if cr is None:
 		abort(404)
 	return Response(cr.symbolicated_data, mimetype='text/plain')
+
+@app.route('/betamail', methods=['GET', 'POST'])
+@requires_admin
+def betamail():
+	if request.method == 'GET':
+		return render_template('betamail.html')
+	elif request.method == 'POST':
+		subject = request.values.get('subject', None)
+		body = request.values.get('body', None)
+		send_email_notification(subject, body)
+		return redirect(url_for('betamail'))
 
 if __name__ == '__main__':
 	app.run()

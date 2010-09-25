@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block titlecontent %}
+<a href="/">Mumble for iOS Beta Portal</a>
+&#x25B8;
+<a href="/betamail">Beta Email Notification</a>
+{% endblock %}
+
+{% block content %}
+<h1>Beta Email Notification</h1>
+	<div class="box">
+		<form method="POST" action="/betamail">
+			<input type="text" name="subject" value="Subject" /><br />
+			<textarea name="body"></textarea><br />
+			<input type="submit" value="Send" /><br />
+		</form>
+	</div>
+{% endblock %}
