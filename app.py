@@ -416,7 +416,7 @@ def create_beta_release():
 			rel.put()
 
 
-			subject='[Mumble iOS Beta] New Beta Release: %s %s' % (br.version, br.gitrev),
+			subject='[Mumble iOS Beta] New Beta Release: %s %s' % (rel.version, rel.gitrev)
 			body='''Hello Mumble for iOS beta tester!
 
 You are receiving this email to notify you that a new beta release is available on the Mumble for iOS Beta Portal.
@@ -424,7 +424,7 @@ You are receiving this email to notify you that a new beta release is available 
 Download it from https://mumble-ios.appspot.com%s
 
 Enjoy,
-Mumble for iOS Beta Team''' % (br.get_download_url())
+Mumble for iOS Beta Team''' % (rel.get_download_url())
 			send_email_notification(subject, body)
 			logging.info('Successfully stored BetaRelease.');
 
